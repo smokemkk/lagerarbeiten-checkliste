@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>OMS Checkliste</title>
+<style>
+:root{--bg:#101418;--card:#1b222b;--fg:#f2f5f8;--dim:#8fa0b0;--acc:#33b5ff;
+      --ok:#2ecc71;--warn:#f5a623;--line:#2a3542;--old:#ff3b30;--oldbg:#4d1210}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+  font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums}
+body{padding-bottom:96px}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
+  padding:10px 12px 0}
+h1{margin:0;font-size:17px;letter-spacing:.3px}
+.kopf{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#22303d;color:var(--dim)}
+.chip.neu{background:#123a20;color:var(--ok)}
+.felder{display:flex;gap:6px;margin:8px 0 6px;flex-wrap:wrap}
+.felder input{flex:1 1 120px;min-width:0;background:#141b23;color:var(--fg);border:1px solid var(--line);
+  border-radius:9px;padding:9px 10px;font-size:14px;font-family:inherit}
+.felder input::placeholder{color:#5f7183}
+.fort{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--dim);padding:2px 0 8px}
+.bar{height:5px;background:#22303d;border-radius:3px;overflow:hidden;margin:0 -12px}
+.bar>i{display:block;height:100%;background:var(--ok);width:0;transition:width .2s}
+#warn{display:none;background:var(--oldbg);color:#ffd9d5;font-size:12.5px;padding:8px 12px;margin:0 -12px;
+  border-top:1px solid #6d1c19}
+#warn.on{display:block}
+#warn button{margin-left:8px;background:var(--old);color:#fff;border:0;border-radius:7px;padding:5px 10px;
+  font-size:12px;font-weight:700;font-family:inherit}
+main{padding:12px}
+.jetzt{background:linear-gradient(180deg,#1f2a36,#18212b);border:1px solid #2f4658;border-radius:18px;
+  padding:16px;margin-bottom:16px}
+.jetzt .lab{font-size:11px;letter-spacing:1.4px;color:var(--acc);font-weight:700}
+.jetzt .nr{font-size:13px;color:var(--dim);margin-top:6px;font-weight:700}
+.jetzt .txt{font-size:30px;line-height:1.18;font-weight:700;margin:4px 0 14px}
+.jetzt.fertig .txt{font-size:24px;color:var(--ok)}
+.akt{display:flex;gap:8px}
+.akt button{flex:1;border:0;border-radius:12px;padding:15px 8px;font-size:15px;font-weight:700;
+  font-family:inherit;color:#08131a}
+.b-ok{background:var(--ok)}
+.b-nz{background:var(--warn)}
+section{margin-bottom:18px}
+.blk{font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--dim);text-transform:uppercase;
+  padding:0 2px 7px}
+.grp{font-size:11.5px;color:var(--acc);padding:2px 2px 6px}
+.item{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);
+  border-radius:12px;padding:12px;margin-bottom:7px}
+.item .box{flex:0 0 26px;height:26px;border-radius:7px;border:2px solid #40566a;display:flex;
+  align-items:center;justify-content:center;font-size:15px;font-weight:700;margin-top:1px}
+.item .nr{flex:0 0 26px;font-size:12px;font-weight:700;color:var(--dim);margin-top:5px}
+.item .t{flex:1;font-size:14.5px;line-height:1.35}
+.item.done{opacity:.55}
+.item.done .box{background:var(--ok);border-color:var(--ok);color:#08131a}
+.item.done .t{text-decoration:line-through}
+.item.nz{opacity:.7}
+.item.nz .box{background:var(--warn);border-color:var(--warn);color:#08131a;font-size:11px}
+.bem{width:100%;min-height:110px;background:var(--card);color:var(--fg);border:1px solid var(--line);
+  border-radius:12px;padding:12px;font-size:14.5px;font-family:inherit;line-height:1.4;resize:vertical}
+.fuss{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);
+  padding:9px 12px;display:flex;gap:8px;align-items:center}
+.fuss button{background:#22303d;color:var(--fg);border:0;border-radius:10px;padding:12px 13px;font-size:14px;
+  font-weight:700;font-family:inherit}
+.fuss .teilen{flex:1;background:var(--acc);color:#08131a}
+.hint{font-size:11.5px;color:var(--dim);line-height:1.45;padding:2px 2px 10px}
+#pinov{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:var(--bg)}
+.pinbox{width:min(86vw,340px);background:var(--card);border:1px solid var(--line);border-radius:16px;
+  padding:22px;text-align:center}
+.pinbox h2{margin:0 0 4px;font-size:19px}
+.pinbox p{margin:0 0 14px;font-size:13px;color:var(--dim)}
+.pinbox input{width:100%;padding:14px;font-size:26px;text-align:center;letter-spacing:6px;border-radius:11px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--fg);font-family:inherit}
+.pinbox button{width:100%;margin-top:12px;padding:14px;font-size:17px;font-weight:800;border:0;
+  border-radius:11px;background:var(--acc);color:#04283d;font-family:inherit}
+#pinmsg{min-height:18px;margin-top:9px;font-size:13px;color:var(--warn)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div id="pinov"><div class="pinbox"><h2>OMS Checkliste</h2>
+<p>Bitte PIN eingeben (einmalig je Ger&auml;t)</p>
+<input id="pin" type="password" inputmode="numeric" autocomplete="off"
+  placeholder="&bull;&bull;&bull;&bull;&bull;&bull;">
+<button onclick="pinGo()">&Ouml;ffnen</button><div id="pinmsg"></div></div></div>
+<header>
+  <div class="kopf"><h1 id="titel">Checkliste</h1><span class="chip" id="wchip">&nbsp;</span></div>
+  <div class="felder">
+    <input id="f_kw" inputmode="numeric" placeholder="Kalenderwoche">
+    <input id="f_datum" type="date">
+    <input id="f_bearb" placeholder="Bearbeiter">
+  </div>
+  <div class="fort"><span id="stand">&nbsp;</span><span id="proz">0 %</span></div>
+  <div class="bar"><i id="balken"></i></div>
+  <div id="warn"><span id="warntext"></span>
+    <button onclick="alteLoeschen()">Alte Wochen l&ouml;schen</button></div>
+</header>
+<main>
+  <div class="jetzt" id="jetzt"></div>
+  <div id="listen"></div>
+  <section>
+    <div class="blk">Bemerkungen / offene Punkte</div>
+    <textarea class="bem" id="bem" placeholder="Was ist offen geblieben? Auff&auml;lligkeiten?"></textarea>
+  </section>
+  <div class="hint">Haken, Felder und Bemerkungen liegen <b>nur auf diesem Ger&auml;t</b>
+    (Browserspeicher, ein Eintrag je Kalenderwoche). Es gibt keinen R&uuml;ckkanal &ndash;
+    zum Weitergeben den Knopf &bdquo;Teilen&ldquo; benutzen. Der Nachweis bleibt das
+    unterschriebene Blatt.</div>
+</main>
+<div class="fuss">
+  <button onclick="undo()">&#8617; Zur&uuml;ck</button>
+  <button class="teilen" onclick="teilen()">Teilen</button>
+  <button onclick="reset()">Reset</button>
+</div>
+<script>
+var LS=(function(){try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return localStorage;}
+catch(e){var m={};return{getItem:function(k){return (k in m)?m[k]:null;},
+setItem:function(k,v){m[k]=String(v);},removeItem:function(k){delete m[k];}};}})();
+
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+  .replace(/"/g,'&quot;');}
+
+/* ISO-Kalenderwoche, streng gerechnet (Donnerstag-Regel) */
+function isoWoche(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
+  var tag=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-tag);
+  var start=new Date(Date.UTC(t.getUTCFullYear(),0,1));
+  return {jahr:t.getUTCFullYear(),kw:Math.ceil(((t-start)/86400000+1)/7)};}
+function isoDatum(d){var m=String(d.getMonth()+1),t=String(d.getDate());
+  return d.getFullYear()+'-'+(m.length<2?'0'+m:m)+'-'+(t.length<2?'0'+t:t);}
+
+var HEUTE=new Date(), W=isoWoche(HEUTE);
+var KEY='lagerarbeiten_'+W.jahr+'-KW'+(W.kw<10?'0'+W.kw:W.kw);
+
+var KATALOG=[], ALLE=[], state=null;
+
+function leer(){return {items:{},hist:[],kw:String(W.kw),datum:isoDatum(HEUTE),bearb:'',bem:'',woche:KEY};}
+function laden(){try{var r=JSON.parse(LS.getItem(KEY)||'null');if(r&&r.items)return r;}catch(e){}
+  return leer();}
+function save(){try{LS.setItem(KEY,JSON.stringify(state));}catch(e){}}
+
+/* Wochen aus frueheren Laeufen, die noch auf dem Geraet liegen */
+function alteWochen(){var r=[];
+  try{for(var k=0;k<localStorage.length;k++){var n=localStorage.key(k);
+    if(n&&n.indexOf('lagerarbeiten_')===0&&n!==KEY)r.push(n);}}catch(e){}
+  return r;}
+
+function alteLoeschen(){var a=alteWochen();
+  if(!a.length)return;
+  if(!confirm('Gespeicherte Daten von '+a.length+' fr\u00fcheren Woche(n) l\u00f6schen?'))return;
+  for(var i=0;i<a.length;i++){try{localStorage.removeItem(a[i]);}catch(e){}}
+  pruefeAlte();}
+
+function pruefeAlte(){var a=alteWochen(),w=document.getElementById('warn');
+  if(!a.length){w.className='';return;}
+  document.getElementById('warntext').textContent=
+    'Auf diesem Ger\u00e4t liegen noch Daten aus '+a.length+' fr\u00fcheren Woche(n) ('+
+    a.map(function(n){return n.replace('lagerarbeiten_','');}).join(', ')+').';
+  w.className='on';}
+
+function st(nr){return state.items[nr]||0;}
+function setzen(nr,wert){state.hist.push({nr:nr,prev:st(nr)});
+  if(state.hist.length>200)state.hist.shift();
+  state.items[nr]=(st(nr)===wert)?0:wert;render();}
+function undo(){if(!state)return;var h=state.hist.pop();if(!h)return;state.items[h.nr]=h.prev;render();}
+
+function naechste(){for(var i=0;i<ALLE.length;i++){if(!st(ALLE[i].nr))return ALLE[i];}return null;}
+
+function render(){
+  var done=0,nz=0;
+  for(var i=0;i<ALLE.length;i++){var s=st(ALLE[i].nr);if(s===1)done++;else if(s===2)nz++;}
+  var offen=ALLE.length-done-nz, fertig=done+nz;
+  document.getElementById('stand').innerHTML=done+' &#10003; &middot; '+nz+' n.z. &middot; '+offen+' offen';
+  var p=ALLE.length?Math.round(fertig*100/ALLE.length):0;
+  document.getElementById('proz').textContent=p+' %';
+  document.getElementById('balken').style.width=p+'%';
+  document.getElementById('wchip').textContent='KW '+W.kw+' / '+W.jahr;
+  document.getElementById('wchip').className='chip'+(p===100?' neu':'');
+
+  var n=naechste(),j=document.getElementById('jetzt');
+  if(n){j.className='jetzt';
+    j.innerHTML='<div class="lab">JETZT DRAN</div><div class="nr">'+esc(n.nr)+
+      (n.g?' &middot; '+esc(n.g):'')+'</div><div class="txt">'+esc(n.t)+'</div>'+
+      '<div class="akt"><button class="b-ok" onclick="setzen(\''+n.nr+'\',1)">&#10003; Erledigt</button>'+
+      '<button class="b-nz" onclick="setzen(\''+n.nr+'\',2)">n. z.</button></div>';
+  }else{j.className='jetzt fertig';
+    j.innerHTML='<div class="lab">DURCHLAUF</div><div class="txt">Alle Punkte abgearbeitet &#10003;</div>'+
+      '<div class="hint" style="padding:0">Bemerkungen erg&auml;nzen, Blatt unterschreiben und ablegen.</div>';}
+
+  var h='';
+  for(var b=0;b<KATALOG.length;b++){
+    h+='<section><div class="blk">'+esc(KATALOG[b].titel)+'</div>';
+    var gz='';
+    for(var i=0;i<KATALOG[b].items.length;i++){
+      var it=KATALOG[b].items[i],s=st(it.nr);
+      if(it.g&&it.g!==gz){h+='<div class="grp">'+esc(it.g)+'</div>';gz=it.g;}
+      if(!it.g)gz='';
+      var kl='item'+(s===1?' done':(s===2?' nz':''));
+      var mark=(s===1?'&#10003;':(s===2?'n.z.':''));
+      h+='<div class="'+kl+'" onclick="setzen(\''+it.nr+'\',1)">'+
+         '<div class="box">'+mark+'</div><div class="nr">'+esc(it.nr)+'</div>'+
+         '<div class="t">'+esc(it.t)+'</div></div>';
+    }
+    h+='</section>';
+  }
+  document.getElementById('listen').innerHTML=h;
+  save();
+}
+
+function feld(id,prop){var el=document.getElementById(id);el.value=state[prop]||'';
+  el.addEventListener('input',function(){state[prop]=el.value;save();});}
+
+function reset(){if(!confirm('Alle Haken, Felder und Bemerkungen dieser Woche zur\u00fccksetzen?'))return;
+  state=leer();
+  document.getElementById('f_kw').value=state.kw;
+  document.getElementById('f_datum').value=state.datum;
+  document.getElementById('f_bearb').value='';
+  document.getElementById('bem').value='';
+  render();}
+
+function bericht(){
+  var z=[(document.getElementById('titel').textContent||'Checkliste')+
+         ' \u2013 KW '+(state.kw||W.kw)+' / '+W.jahr,
+         'Datum: '+(state.datum||'')+'   Bearbeiter: '+(state.bearb||'\u2013'),''];
+  for(var b=0;b<KATALOG.length;b++){
+    z.push(KATALOG[b].titel);
+    for(var i=0;i<KATALOG[b].items.length;i++){var it=KATALOG[b].items[i],s=st(it.nr);
+      z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (n. z.)':''));}
+    z.push('');}
+  z.push('Bemerkungen / offene Punkte:');
+  z.push(state.bem?state.bem:'\u2013');
+  return z.join('\n');}
+
+function teilen(){var t=bericht();
+  if(navigator.share){navigator.share({title:document.getElementById('titel').textContent,text:t})
+    .catch(function(){});return;}
+  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){alert('In die Zwischenablage kopiert.');},
+    function(){alert(t);});return;}
+  alert(t);}
+
+/* Start, sobald der Katalog da ist (lokal sofort, im Repo nach der Entschluesselung) */
+function startApp(d){
+  KATALOG=d.bloecke||[];
+  if(d.titel){document.getElementById('titel').textContent=d.titel;document.title=d.titel;}
+  ALLE=[];
+  for(var b=0;b<KATALOG.length;b++){for(var i=0;i<KATALOG[b].items.length;i++){
+    var it=KATALOG[b].items[i];ALLE.push({b:b,nr:it.nr,t:it.t,g:it.g});}}
+  state=laden();
+  feld('f_kw','kw');feld('f_datum','datum');feld('f_bearb','bearb');feld('bem','bem');
+  pruefeAlte();
+  render();
+}
+
+
+/* Datenlos ausgeliefert: Katalog kommt verschluesselt aus data.enc.json und wird
+   im Browser mit der PIN entschluesselt (PBKDF2 200k -> AES-256-GCM). */
+var b64=function(s){return Uint8Array.from(atob(s),function(c){return c.charCodeAt(0);});};
+
+async function holeEnc(){
+  var r=await fetch('data.enc.json?t='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw new Error('Daten nicht erreichbar');
+  return r.json();
+}
+async function schluessel(pin,salt){
+  var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pin),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:200000,hash:'SHA-256'},
+    km,{name:'AES-GCM',length:256},false,['decrypt']);
+}
+async function versuche(pin){
+  var enc=await holeEnc();
+  var key=await schluessel(pin,b64(enc.salt));
+  var klar=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(enc.iv)},key,b64(enc.data));
+  return JSON.parse(new TextDecoder().decode(klar));
+}
+window.pinGo=async function(){
+  var pin=document.getElementById('pin').value.trim();
+  var msg=document.getElementById('pinmsg');
+  msg.textContent='Pr\u00fcfe \u2026';
+  try{var d=await versuche(pin);LS.setItem('lagerarbeiten_pin',pin);
+    document.getElementById('pinov').remove();startApp(d);}
+  catch(e){msg.textContent='PIN falsch oder Daten nicht erreichbar.';}
+};
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&document.getElementById('pinov'))pinGo();});
+(async function(){
+  var gespeichert=LS.getItem('lagerarbeiten_pin');
+  if(gespeichert){try{var d=await versuche(gespeichert);
+    document.getElementById('pinov').remove();startApp(d);return;}catch(e){}}
+  document.getElementById('pinov').style.display='flex';
+})();
+
+</script>
+</body>
+</html>
