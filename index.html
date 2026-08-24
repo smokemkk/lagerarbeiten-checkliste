@@ -108,8 +108,8 @@ section{margin-bottom:18px}
   </section>
   <div class="hint">Haken, Felder und Bemerkungen liegen <b>nur auf diesem Ger&auml;t</b>
     (Browserspeicher, ein Eintrag je Kalenderwoche). Es gibt keinen R&uuml;ckkanal &ndash;
-    zum Weitergeben den Knopf &bdquo;Teilen&ldquo; benutzen. Der Nachweis bleibt das
-    unterschriebene Blatt.</div>
+    zum Abschluss die Liste &uuml;ber den Knopf &bdquo;Teilen&ldquo; versenden &ndash;
+    das ist der Nachweis f&uuml;r den Durchlauf.</div>
 </main>
 <div class="fuss">
   <button onclick="undo()">&#8617; Zur&uuml;ck</button>
@@ -188,7 +188,8 @@ function render(){
       '<button class="b-nz" onclick="setzen(\''+n.nr+'\',2)">n. z.</button></div>';
   }else{j.className='jetzt fertig';
     j.innerHTML='<div class="lab">DURCHLAUF</div><div class="txt">Alle Punkte abgearbeitet &#10003;</div>'+
-      '<div class="hint" style="padding:0">Bemerkungen erg&auml;nzen, Blatt unterschreiben und ablegen.</div>';}
+      '<div class="hint" style="padding:0">Bemerkungen erg&auml;nzen, dann die Liste &uuml;ber '
+      '&bdquo;Teilen&ldquo; versenden (letzter Punkt).</div>';}
 
   var h='';
   for(var b=0;b<KATALOG.length;b++){
