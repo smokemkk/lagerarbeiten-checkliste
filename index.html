@@ -54,6 +54,13 @@ section{margin-bottom:18px}
   align-items:center;justify-content:center;font-size:15px;font-weight:700;margin-top:1px}
 .item .nr{flex:0 0 26px;font-size:12px;font-weight:700;color:var(--dim);margin-top:5px}
 .item .t{flex:1;font-size:14.5px;line-height:1.35}
+.tm{flex:0 0 auto;display:flex;align-items:center;gap:5px;background:#22303d;color:var(--dim);border:0;
+  border-radius:9px;padding:6px 9px;font-size:13px;font-weight:700;font-family:inherit;
+  font-variant-numeric:tabular-nums;align-self:center}
+.tm.hat{color:var(--fg)}
+.tm.an{background:var(--acc);color:#08131a}
+.jetzt .tm{font-size:17px;padding:10px 14px;margin:0 0 14px 0;border-radius:12px}
+#gz{font-weight:700;color:var(--fg)}
 .item.done{opacity:.55}
 .item.done .box{background:var(--ok);border-color:var(--ok);color:#08131a}
 .item.done .t{text-decoration:line-through}
@@ -67,6 +74,21 @@ section{margin-bottom:18px}
   font-weight:700;font-family:inherit}
 .fuss .teilen{flex:1;background:var(--acc);color:#08131a}
 .hint{font-size:11.5px;color:var(--dim);line-height:1.45;padding:2px 2px 10px}
+#hinweis{display:none;background:#2b2410;border:1px solid #6b5418;color:#ffe2a8;border-radius:12px;
+  padding:10px 12px;margin-bottom:12px;font-size:15px;font-weight:700;text-align:center}
+#hinweis.on{display:block}
+.sub{background:#141b23;border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:-3px 0 9px 36px}
+.jetzt .sub{margin:0 0 14px 0}
+.sub .ut{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--acc);padding:6px 0 3px;text-transform:uppercase}
+.sub .z{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.3;padding:7px 0;
+  border-bottom:1px solid #1f2a35;cursor:pointer}
+.sub .z:last-child{border-bottom:0}
+.sub .bx{flex:0 0 22px;height:22px;border-radius:6px;border:2px solid #40566a;display:flex;
+  align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.sub .z.done{opacity:.55}
+.sub .z.done .bx{background:var(--ok);border-color:var(--ok);color:#08131a}
+.sub .z.done .zt{text-decoration:line-through}
+.sub .m{flex:0 0 38px;text-align:right;font-weight:700;color:var(--fg)}
 #pinov{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:var(--bg)}
 .pinbox{width:min(86vw,340px);background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:22px;text-align:center}
@@ -94,19 +116,20 @@ section{margin-bottom:18px}
     <input id="f_datum" type="date">
     <input id="f_bearb" placeholder="Bearbeiter">
   </div>
-  <div class="fort"><span id="stand">&nbsp;</span><span id="proz">0 %</span></div>
+  <div class="fort"><span id="stand">&nbsp;</span><span id="gz">&#9201; 00:00</span><span id="proz">0 %</span></div>
   <div class="bar"><i id="balken"></i></div>
   <div id="warn"><span id="warntext"></span>
     <button onclick="alteLoeschen()">Alte Wochen l&ouml;schen</button></div>
 </header>
 <main>
+  <div id="hinweis"></div>
   <div class="jetzt" id="jetzt"></div>
   <div id="listen"></div>
   <section>
     <div class="blk">Bemerkungen / offene Punkte</div>
     <textarea class="bem" id="bem" placeholder="Was ist offen geblieben? Auff&auml;lligkeiten?"></textarea>
   </section>
-  <div class="hint">Haken, Felder und Bemerkungen liegen <b>nur auf diesem Ger&auml;t</b>
+  <div class="hint">Haken, Zeiten, Felder und Bemerkungen liegen <b>nur auf diesem Ger&auml;t</b>
     (Browserspeicher, ein Eintrag je Kalenderwoche). Es gibt keinen R&uuml;ckkanal &ndash;
     zum Abschluss die Liste &uuml;ber den Knopf &bdquo;Teilen&ldquo; versenden &ndash;
     das ist der Nachweis f&uuml;r den Durchlauf.</div>
@@ -137,7 +160,8 @@ var KEY='lagerarbeiten_'+W.jahr+'-KW'+(W.kw<10?'0'+W.kw:W.kw);
 
 var KATALOG=[], ALLE=[], state=null;
 
-function leer(){return {items:{},hist:[],kw:String(W.kw),datum:isoDatum(HEUTE),bearb:'',bem:'',woche:KEY};}
+function leer(){return {items:{},hist:[],zeit:{},lauf:null,kw:String(W.kw),datum:isoDatum(HEUTE),
+  bearb:'',bem:'',woche:KEY};}
 function laden(){try{var r=JSON.parse(LS.getItem(KEY)||'null');if(r&&r.items)return r;}catch(e){}
   return leer();}
 function save(){try{LS.setItem(KEY,JSON.stringify(state));}catch(e){}}
@@ -164,8 +188,55 @@ function pruefeAlte(){var a=alteWochen(),w=document.getElementById('warn');
 function st(nr){return state.items[nr]||0;}
 function setzen(nr,wert){state.hist.push({nr:nr,prev:st(nr)});
   if(state.hist.length>200)state.hist.shift();
-  state.items[nr]=(st(nr)===wert)?0:wert;render();}
-function undo(){if(!state)return;var h=state.hist.pop();if(!h)return;state.items[h.nr]=h.prev;render();}
+  state.items[nr]=(st(nr)===wert)?0:wert;
+  if(state.items[nr]!==0)stoppeWenn(nr);
+  render();}
+
+/* Zeiterfassung je Punkt: state.zeit[nr] = gesammelte ms, state.lauf = {nr,start}
+   fuer den einen laufenden Timer (bleibt ueber Neuladen erhalten). */
+function zeitMs(nr){var z=(state.zeit&&state.zeit[nr])||0;
+  if(state.lauf&&state.lauf.nr===nr)z+=Math.max(0,Date.now()-state.lauf.start);return z;}
+function fmt(ms){var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
+  var p=function(n){return (n<10?'0':'')+n;};return (h?h+':'+p(m):p(m))+':'+p(x);}
+function stoppen(){if(!state.lauf)return;state.zeit=state.zeit||{};
+  state.zeit[state.lauf.nr]=zeitMs(state.lauf.nr);state.lauf=null;}
+function stoppeWenn(nr){if(state.lauf&&state.lauf.nr===nr)stoppen();}
+function timer(nr,ev){if(ev)ev.stopPropagation();
+  var lief=!!(state.lauf&&state.lauf.nr===nr);stoppen();
+  if(!lief)state.lauf={nr:nr,start:Date.now()};render();}
+function gesamtMs(){var t=0;for(var i=0;i<ALLE.length;i++)t+=zeitMs(ALLE[i].nr);return t;}
+function timerKnopf(nr){var an=!!(state.lauf&&state.lauf.nr===nr),z=zeitMs(nr);
+  return '<button class="tm'+(an?' an':(z?' hat':''))+'" data-tnr="'+esc(nr)+'" onclick="timer(\''+nr+'\',event)">'+
+    (an?'&#10074;&#10074;':'&#9654;')+' <span class="tz">'+fmt(z)+'</span></button>';}
+function tick(){if(!state)return;
+  var els=document.querySelectorAll('[data-tnr]');
+  for(var i=0;i<els.length;i++){els[i].querySelector('.tz').textContent=fmt(zeitMs(els[i].getAttribute('data-tnr')));}
+  document.getElementById('gz').textContent='⏱ '+fmt(gesamtMs());}
+function undo(){if(!state)return;var h=state.hist.pop();if(!h)return;
+  if(h.multi){for(var k=h.multi.length-1;k>=0;k--)state.items[h.multi[k].nr]=h.multi[k].prev;}
+  else{state.items[h.nr]=h.prev;}
+  render();}
+
+/* Unterzeilen (Ready-Mengen) - einzeln abhakbar */
+function unterliste(b,i){var it=KATALOG[b].items[i],u=it.u;if(!u||!u.length)return '';
+  var h='<div class="sub">',gz='';
+  for(var j=0;j<u.length;j++){var r=u[j],s=st(r.id);
+    if(r.g&&r.g!==gz){h+='<div class="ut">'+esc(r.g)+'</div>';gz=r.g;}
+    h+='<div class="z'+(s===1?' done':'')+'" onclick="subSetzen('+b+','+i+','+j+')">'+
+       '<span class="bx">'+(s===1?'&#10003;':'')+'</span><span class="m">'+esc(r.m)+
+       '</span><span class="zt">'+esc(r.t)+'</span></div>';}
+  return h+'</div>';}
+
+/* Unterzeile umschalten; sind alle erledigt, wird der Hauptpunkt mit abgehakt,
+   wird eine wieder geoeffnet, ist der Hauptpunkt nicht mehr erledigt. Ein Undo
+   nimmt beides gemeinsam zurueck. */
+function subSetzen(b,i,j){var it=KATALOG[b].items[i],r=it.u[j];
+  var e={multi:[{nr:r.id,prev:st(r.id)},{nr:it.nr,prev:st(it.nr)}]};
+  var neu=(st(r.id)===1)?0:1;state.items[r.id]=neu;
+  var alle=true;for(var k=0;k<it.u.length;k++){if(st(it.u[k].id)!==1){alle=false;break;}}
+  if(alle&&st(it.nr)===0){state.items[it.nr]=1;stoppeWenn(it.nr);}
+  if(neu===0&&st(it.nr)===1)state.items[it.nr]=0;
+  state.hist.push(e);if(state.hist.length>200)state.hist.shift();render();}
 
 function naechste(){for(var i=0;i<ALLE.length;i++){if(!st(ALLE[i].nr))return ALLE[i];}return null;}
 
@@ -174,6 +245,7 @@ function render(){
   for(var i=0;i<ALLE.length;i++){var s=st(ALLE[i].nr);if(s===1)done++;else if(s===2)nz++;}
   var offen=ALLE.length-done-nz, fertig=done+nz;
   document.getElementById('stand').innerHTML=done+' &#10003; &middot; '+nz+' n.z. &middot; '+offen+' offen';
+  document.getElementById('gz').textContent='⏱ '+fmt(gesamtMs());
   var p=ALLE.length?Math.round(fertig*100/ALLE.length):0;
   document.getElementById('proz').textContent=p+' %';
   document.getElementById('balken').style.width=p+'%';
@@ -183,7 +255,7 @@ function render(){
   var n=naechste(),j=document.getElementById('jetzt');
   if(n){j.className='jetzt';
     j.innerHTML='<div class="lab">JETZT DRAN</div><div class="nr">'+esc(n.nr)+
-      (n.g?' &middot; '+esc(n.g):'')+'</div><div class="txt">'+esc(n.t)+'</div>'+
+      (n.g?' &middot; '+esc(n.g):'')+'</div><div class="txt">'+esc(n.t)+'</div>'+timerKnopf(n.nr)+unterliste(n.b,n.i)+
       '<div class="akt"><button class="b-ok" onclick="setzen(\''+n.nr+'\',1)">&#10003; Erledigt</button>'+
       '<button class="b-nz" onclick="setzen(\''+n.nr+'\',2)">n. z.</button></div>';
   }else{j.className='jetzt fertig';
@@ -203,7 +275,7 @@ function render(){
       var mark=(s===1?'&#10003;':(s===2?'n.z.':''));
       h+='<div class="'+kl+'" onclick="setzen(\''+it.nr+'\',1)">'+
          '<div class="box">'+mark+'</div><div class="nr">'+esc(it.nr)+'</div>'+
-         '<div class="t">'+esc(it.t)+'</div></div>';
+         '<div class="t">'+esc(it.t)+'</div>'+timerKnopf(it.nr)+'</div>'+unterliste(b,i);
     }
     h+='</section>';
   }
@@ -214,7 +286,7 @@ function render(){
 function feld(id,prop){var el=document.getElementById(id);el.value=state[prop]||'';
   el.addEventListener('input',function(){state[prop]=el.value;save();});}
 
-function reset(){if(!confirm('Alle Haken, Felder und Bemerkungen dieser Woche zur\u00fccksetzen?'))return;
+function reset(){if(!confirm('Alle Haken, Zeiten, Felder und Bemerkungen dieser Woche zur\u00fccksetzen?'))return;
   state=leer();
   document.getElementById('f_kw').value=state.kw;
   document.getElementById('f_datum').value=state.datum;
@@ -229,8 +301,14 @@ function bericht(){
   for(var b=0;b<KATALOG.length;b++){
     z.push(KATALOG[b].titel);
     for(var i=0;i<KATALOG[b].items.length;i++){var it=KATALOG[b].items[i],s=st(it.nr);
-      z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (n. z.)':''));}
+      var zm=zeitMs(it.nr);
+      z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (n. z.)':'')+
+             (zm?'   ⏱ '+fmt(zm):''));
+      if(it.u){for(var j=0;j<it.u.length;j++){var r=it.u[j];
+        z.push('        ['+(st(r.id)===1?'x':' ')+'] '+r.m+'  '+r.t);}}}
     z.push('');}
+  z.push('Zeit gesamt: '+fmt(gesamtMs())+(state.lauf?'   (Timer '+state.lauf.nr+' läuft noch)':''));
+  z.push('');
   z.push('Bemerkungen / offene Punkte:');
   z.push(state.bem?state.bem:'\u2013');
   return z.join('\n');}
@@ -248,11 +326,16 @@ function startApp(d){
   if(d.titel){document.getElementById('titel').textContent=d.titel;document.title=d.titel;}
   ALLE=[];
   for(var b=0;b<KATALOG.length;b++){for(var i=0;i<KATALOG[b].items.length;i++){
-    var it=KATALOG[b].items[i];ALLE.push({b:b,nr:it.nr,t:it.t,g:it.g});}}
+    var it=KATALOG[b].items[i];ALLE.push({b:b,i:i,nr:it.nr,t:it.t,g:it.g,u:it.u});}}
+  var hw=document.getElementById('hinweis');
+  if(d.hinweis){hw.textContent=d.hinweis;hw.className='on';}else{hw.className='';}
   state=laden();
   feld('f_kw','kw');feld('f_datum','datum');feld('f_bearb','bearb');feld('bem','bem');
+  if(!state.zeit)state.zeit={};
+  if(state.lauf===undefined)state.lauf=null;
   pruefeAlte();
   render();
+  setInterval(tick,1000);
 }
 
 
