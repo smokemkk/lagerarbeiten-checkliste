@@ -10,77 +10,59 @@
 <style>
 :root{--bg:#101418;--card:#1b222b;--fg:#f2f5f8;--dim:#8fa0b0;--acc:#33b5ff;
       --ok:#2ecc71;--warn:#f5a623;--line:#2a3542;--old:#ff3b30;--oldbg:#4d1210}
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* touch-action:manipulation schaltet das Doppeltipp-Zoomen ab; Scrollen und Zwei-Finger-Zoom bleiben. */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
   font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-variant-numeric:tabular-nums}
-body{padding-bottom:96px}
-header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);
-  padding:10px 12px 0}
-h1{margin:0;font-size:17px;letter-spacing:.3px}
-.kopf{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.chip{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;background:#22303d;color:var(--dim)}
-.chip.neu{background:#123a20;color:var(--ok)}
-.felder{display:flex;gap:6px;margin:8px 0 6px;flex-wrap:wrap}
-.felder input{flex:1 1 120px;min-width:0;background:#141b23;color:var(--fg);border:1px solid var(--line);
-  border-radius:9px;padding:9px 10px;font-size:14px;font-family:inherit}
+body{padding-bottom:132px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
+  padding:8px 10px 6px}
+.tourrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.tour{font-size:15px;font-weight:700;color:var(--acc)}
+.agebadge{display:inline-block;margin-left:7px;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:800;
+  letter-spacing:.6px;vertical-align:middle;background:#12331f;color:var(--ok);border:1px solid var(--ok)}
+.agebadge.fertig{background:#12304a;color:var(--acc);border-color:var(--acc)}
+.felder{display:flex;gap:6px;margin:7px 0 4px;flex-wrap:wrap}
+.felder input{flex:1 1 110px;min-width:0;background:var(--card);color:var(--fg);border:1px solid var(--line);
+  border-radius:9px;padding:8px 10px;font-size:14px;font-family:inherit}
 .felder input::placeholder{color:#5f7183}
-.fort{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--dim);padding:2px 0 8px}
-.bar{height:5px;background:#22303d;border-radius:3px;overflow:hidden;margin:0 -12px}
-.bar>i{display:block;height:100%;background:var(--ok);width:0;transition:width .2s}
-#warn{display:none;background:var(--oldbg);color:#ffd9d5;font-size:12.5px;padding:8px 12px;margin:0 -12px;
+.prog{font-size:13px;color:var(--dim)}
+.prog b{color:var(--ok)} .prog i{color:var(--warn);font-style:normal}
+.navtabs{display:flex;gap:6px;padding:7px 0 4px}
+.navtab{flex:1;text-align:center;padding:9px 4px;border-radius:12px;background:var(--card);color:var(--dim);
+  font-size:13px;font-weight:700;border:1px solid var(--line);white-space:nowrap}
+.navtab.act{background:var(--acc);color:#04283d;border-color:var(--acc)}
+.navtab.pkt{color:#ffd54a;border-color:#ffd54a;font-size:15px;font-weight:800}
+.navtab.pkt.act{background:#ffd54a;color:#3a2a00}
+.navtab.pkt.neu{animation:pktbump .5s ease-out}
+@keyframes pktbump{0%{transform:scale(1)}40%{transform:scale(1.25)}100%{transform:scale(1)}}
+.bar{height:5px;background:var(--card);border-radius:3px;overflow:hidden;margin-top:4px}
+.bar>i{display:block;height:100%;background:var(--ok);width:0;transition:width .25s}
+#warn{display:none;background:var(--oldbg);color:#ffd9d5;font-size:12.5px;padding:8px 12px;margin:6px -10px -6px;
   border-top:1px solid #6d1c19}
 #warn.on{display:block}
 #warn button{margin-left:8px;background:var(--old);color:#fff;border:0;border-radius:7px;padding:5px 10px;
   font-size:12px;font-weight:700;font-family:inherit}
-main{padding:12px}
-.jetzt{background:linear-gradient(180deg,#1f2a36,#18212b);border:1px solid #2f4658;border-radius:18px;
-  padding:16px;margin-bottom:16px}
-.jetzt .lab{font-size:11px;letter-spacing:1.4px;color:var(--acc);font-weight:700}
-.jetzt .nr{font-size:13px;color:var(--dim);margin-top:6px;font-weight:700}
-.jetzt .txt{font-size:30px;line-height:1.18;font-weight:700;margin:4px 0 14px}
-.jetzt.fertig .txt{font-size:24px;color:var(--ok)}
-.akt{display:flex;gap:8px}
-.akt button{flex:1;border:0;border-radius:12px;padding:15px 8px;font-size:15px;font-weight:700;
-  font-family:inherit;color:#08131a}
-.b-ok{background:var(--ok)}
-.b-nz{background:var(--warn)}
-section{margin-bottom:18px}
-.blk{font-size:12px;font-weight:700;letter-spacing:.8px;color:var(--dim);text-transform:uppercase;
-  padding:0 2px 7px}
-.grp{font-size:11.5px;color:var(--acc);padding:2px 2px 6px}
-.item{display:flex;align-items:flex-start;gap:10px;background:var(--card);border:1px solid var(--line);
-  border-radius:12px;padding:12px;margin-bottom:7px}
-.item .box{flex:0 0 26px;height:26px;border-radius:7px;border:2px solid #40566a;display:flex;
-  align-items:center;justify-content:center;font-size:15px;font-weight:700;margin-top:1px}
-.item .nr{flex:0 0 26px;font-size:12px;font-weight:700;color:var(--dim);margin-top:5px}
-.item .t{flex:1;font-size:14.5px;line-height:1.35}
-.tm{flex:0 0 auto;display:flex;align-items:center;gap:5px;background:#22303d;color:var(--dim);border:0;
-  border-radius:9px;padding:6px 9px;font-size:13px;font-weight:700;font-family:inherit;
-  font-variant-numeric:tabular-nums;align-self:center}
-.tm.hat{color:var(--fg)}
-.tm.an{background:var(--acc);color:#08131a}
-.jetzt .tm{font-size:17px;padding:10px 14px;margin:0 0 14px 0;border-radius:12px}
-#gz{font-weight:700;color:var(--fg)}
-.item.done{opacity:.55}
-.item.done .box{background:var(--ok);border-color:var(--ok);color:#08131a}
-.item.done .t{text-decoration:line-through}
-.item.nz{opacity:.7}
-.item.nz .box{background:var(--warn);border-color:var(--warn);color:#08131a;font-size:11px}
-.bem{width:100%;min-height:110px;background:var(--card);color:var(--fg);border:1px solid var(--line);
-  border-radius:12px;padding:12px;font-size:14.5px;font-family:inherit;line-height:1.4;resize:vertical}
-.fuss{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--card);border-top:1px solid var(--line);
-  padding:9px 12px;display:flex;gap:8px;align-items:center}
-.fuss button{background:#22303d;color:var(--fg);border:0;border-radius:10px;padding:12px 13px;font-size:14px;
-  font-weight:700;font-family:inherit}
-.fuss .teilen{flex:1;background:var(--acc);color:#08131a}
-.hint{font-size:11.5px;color:var(--dim);line-height:1.45;padding:2px 2px 10px}
-#hinweis{display:none;background:#2b2410;border:1px solid #6b5418;color:#ffe2a8;border-radius:12px;
-  padding:10px 12px;margin-bottom:12px;font-size:15px;font-weight:700;text-align:center}
+#hinweis{display:none;margin:10px 10px 0;background:#2b2410;border:1px solid #6b5418;color:#ffe2a8;border-radius:12px;
+  padding:9px 12px;font-size:15px;font-weight:700;text-align:center}
 #hinweis.on{display:block}
-.sub{background:#141b23;border:1px solid var(--line);border-radius:12px;padding:8px 12px;margin:-3px 0 9px 36px}
-.jetzt .sub{margin:0 0 14px 0}
+/* Schritt-Karte (bleibt unter dem Kopf stehen; die Ablauf-Liste laeuft darunter mit) */
+.stepcard{margin:10px;padding:14px;background:var(--card);border:2px solid var(--acc);border-radius:16px}
+.stepcard.fest{position:sticky;top:var(--kopf,0px);z-index:4;box-shadow:0 -11px 0 0 var(--bg),0 6px 10px -4px #000a}
+.stepcard .shead{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.kbadge{flex:0 0 auto;background:var(--acc);color:#04283d;font-size:14px;font-weight:800;padding:4px 10px;border-radius:9px}
+.stepcard .stitle{font-size:19px;font-weight:800;line-height:1.25}
+.stepcard .ssub{width:100%;font-size:13px;color:var(--dim);margin-top:3px;line-height:1.3;text-transform:uppercase;letter-spacing:.5px}
+.tmrrow{display:flex;align-items:baseline;gap:14px;margin-top:10px}
+.tmr{font-size:50px;font-weight:800;line-height:1;color:var(--ok)}
+.tmr.pause{color:var(--warn)}
+.soll{margin-left:auto;text-align:right;font-size:13px;color:var(--dim);line-height:1.4}
+.soll b{color:var(--fg);font-size:16px}
+.pausenote{margin-top:8px;padding:8px 10px;border-radius:10px;background:#3a2f14;color:var(--warn);font-weight:800;
+  font-size:14px;text-align:center}
+.sub{background:#141b23;border:1px solid var(--line);border-radius:12px;padding:6px 12px;margin:12px 0 0}
 .sub .ut{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--acc);padding:6px 0 3px;text-transform:uppercase}
-.sub .z{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.3;padding:7px 0;
+.sub .z{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.3;padding:8px 0;
   border-bottom:1px solid #1f2a35;cursor:pointer}
 .sub .z:last-child{border-bottom:0}
 .sub .bx{flex:0 0 22px;height:22px;border-radius:6px;border:2px solid #40566a;display:flex;
@@ -89,6 +71,57 @@ section{margin-bottom:18px}
 .sub .z.done .bx{background:var(--ok);border-color:var(--ok);color:#08131a}
 .sub .z.done .zt{text-decoration:line-through}
 .sub .m{flex:0 0 38px;text-align:right;font-weight:700;color:var(--fg)}
+.subhint{font-size:12px;color:var(--dim);margin-top:8px;line-height:1.4}
+.alldone{margin:10px;padding:20px;text-align:center;background:var(--card);border:2px solid var(--ok);border-radius:16px;
+  font-size:20px;font-weight:800;color:var(--ok)}
+.alldone .pktmax{font-size:13px;font-weight:600;color:var(--dim);margin-top:4px}
+h3{margin:16px 12px 2px;font-size:13px;color:var(--dim);letter-spacing:1px;text-transform:uppercase}
+.steps{margin:6px 10px}
+.srow{display:flex;align-items:center;gap:9px;padding:9px 8px;border-bottom:1px solid var(--line);font-size:14px;color:var(--dim)}
+.srow .snr{flex:0 0 auto;min-width:30px;text-align:center;font-weight:800;font-size:12px;color:var(--dim);
+  border:1px solid var(--line);border-radius:7px;padding:3px 4px}
+.srow .snm{flex:1;line-height:1.25;min-width:0}
+.srow .snm small{display:block;font-size:11px;color:var(--dim)}
+.srow .szeit{flex:0 0 auto;font-size:13px}
+.srow.cur{color:var(--fg);background:#12202e;border-left:3px solid var(--acc);border-radius:6px}
+.srow.cur .snr{color:var(--acc);border-color:var(--acc)}
+.srow.ok{opacity:.55} .srow.ok .snr{color:var(--ok);border-color:var(--ok)}
+.srow.sk{opacity:.45} .srow.sk .snm{text-decoration:line-through} .srow.sk .snr{color:var(--warn);border-color:var(--warn)}
+.srow.kopf{color:var(--dim);font-size:11px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--dim)}
+.srow.summe{color:var(--fg);font-weight:800;border-top:2px solid var(--line)}
+.srow.pkt{color:var(--fg)} .srow.pkt .z3{min-width:84px;font-size:14px;font-weight:800}
+.z3{flex:0 0 auto;min-width:52px;text-align:right;font-size:13px}
+.istok{color:var(--ok)}
+.sgroup{margin:14px 12px 2px;font-size:13px;font-weight:800;color:var(--acc);letter-spacing:.4px}
+.report{display:block;width:calc(100% - 24px);margin:14px 12px;padding:15px;font-size:17px;font-weight:800;border:0;
+  border-radius:12px;background:var(--warn);color:#3a2a00;font-family:inherit}
+.report.z{background:#12304a;color:var(--acc);border:1.5px solid var(--acc)}
+.report.r{background:var(--card);color:var(--dim);border:1.5px solid var(--line);font-size:14px}
+.bem{width:calc(100% - 24px);margin:4px 12px 0;min-height:110px;background:var(--card);color:var(--fg);border:1px solid var(--line);
+  border-radius:12px;padding:12px;font-size:14.5px;font-family:inherit;line-height:1.4;resize:vertical}
+.hint{margin:8px 12px 16px;font-size:12.5px;color:var(--dim);line-height:1.45}
+.next{position:fixed;left:0;right:0;bottom:0;z-index:6;background:linear-gradient(#141a21f2,#141a21);border-top:1px solid var(--line);
+  padding:7px 10px 10px;display:flex;gap:8px;align-items:stretch}
+.stepback{flex:0 0 auto;align-self:center;padding:13px 12px;font-size:15px;font-weight:800;border-radius:12px;
+  border:1.5px solid var(--dim);background:var(--card);color:var(--fg);font-family:inherit}
+.stepback:disabled{opacity:.35}
+.stepback.pause.on{border-color:var(--warn);color:var(--warn);background:#3a2f14}
+.skipbtn{flex:0 0 auto;padding:13px 10px;font-size:14px;font-weight:800;border-radius:12px;background:var(--card);
+  color:var(--warn);border:1.5px solid var(--warn);font-family:inherit}
+.fertigbtn{flex:1;padding:15px 8px;font-size:18px;font-weight:800;border:0;border-radius:12px;background:var(--ok);
+  color:#03210f;font-family:inherit}
+.nx{flex:1;min-width:0;display:flex;align-items:center}
+.nx .lbl{font-size:11px;letter-spacing:1.5px;color:var(--dim);font-weight:700}
+#pktpop{position:fixed;right:10px;bottom:92px;z-index:50;pointer-events:none;text-align:center;padding:8px 14px;
+  border-radius:14px;background:#2b2205f2;border:2px solid #ffd54a;color:#ffd54a;font-size:26px;font-weight:900;line-height:1;
+  white-space:nowrap;box-shadow:0 4px 16px #000c;transform-origin:right bottom;animation:pktpop 1.3s ease-out forwards}
+#pktpop small{display:block;margin-top:4px;font-size:11px;font-weight:700;color:#fff3c4}
+@keyframes pktpop{0%{opacity:0;transform:scale(.4)}15%{opacity:1;transform:scale(1.15)}30%{transform:scale(1)}
+  75%{opacity:1;transform:translateY(-6px) scale(1)}100%{opacity:0;transform:translateY(-22px) scale(.9)}}
+#pktpop.gross{font-size:32px;box-shadow:0 0 0 4px #ffd54a33,0 4px 18px #000c}
+.pktteil{position:fixed;right:48px;bottom:112px;z-index:49;pointer-events:none;font-size:15px;line-height:1;
+  animation:pktflug 1.1s ease-out forwards}
+@keyframes pktflug{0%{opacity:1;transform:scale(.5)}70%{opacity:1}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(1.2) rotate(var(--rot))}}
 #pinov{position:fixed;inset:0;z-index:99;display:none;align-items:center;justify-content:center;background:var(--bg)}
 .pinbox{width:min(86vw,340px);background:var(--card);border:1px solid var(--line);border-radius:16px;
   padding:22px;text-align:center}
@@ -99,7 +132,9 @@ section{margin-bottom:18px}
 .pinbox button{width:100%;margin-top:12px;padding:14px;font-size:17px;font-weight:800;border:0;
   border-radius:11px;background:var(--acc);color:#04283d;font-family:inherit}
 #pinmsg{min-height:18px;margin-top:9px;font-size:13px;color:var(--warn)}
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}#pktpop{animation:pktfade 1.3s linear forwards}
+  .navtab.pkt.neu{animation:none}.pktteil{display:none}}
+@keyframes pktfade{0%,80%{opacity:1}100%{opacity:0}}
 </style>
 </head>
 <body>
@@ -110,42 +145,66 @@ section{margin-bottom:18px}
   placeholder="&bull;&bull;&bull;&bull;&bull;&bull;">
 <button onclick="pinGo()">&Ouml;ffnen</button><div id="pinmsg"></div></div></div>
 <header>
-  <div class="kopf"><h1 id="titel">Checkliste</h1><span class="chip" id="wchip">&nbsp;</span></div>
+  <div class="tourrow"><span><span class="tour" id="titel">Checkliste</span><span class="agebadge" id="wchip">&nbsp;</span></span>
+    <span class="prog" id="zeitges"></span></div>
   <div class="felder">
     <input id="f_kw" inputmode="numeric" placeholder="Kalenderwoche">
     <input id="f_datum" type="date">
     <input id="f_bearb" placeholder="Bearbeiter">
   </div>
-  <div class="fort"><span id="stand">&nbsp;</span><span id="gz">&#9201; 00:00</span><span id="proz">0 %</span></div>
+  <div class="tourrow"><span class="prog" id="stand">&nbsp;</span><span class="prog" id="proz">0 %</span></div>
+  <div id="navzone"></div>
   <div class="bar"><i id="balken"></i></div>
   <div id="warn"><span id="warntext"></span>
     <button onclick="alteLoeschen()">Alte Wochen l&ouml;schen</button></div>
 </header>
-<main>
-  <div id="hinweis"></div>
-  <div class="jetzt" id="jetzt"></div>
-  <div id="listen"></div>
-  <section>
-    <div class="blk">Bemerkungen / offene Punkte</div>
-    <textarea class="bem" id="bem" placeholder="Was ist offen geblieben? Auff&auml;lligkeiten?"></textarea>
-  </section>
+<div id="hinweis"></div>
+<div id="main"></div>
+<section id="bemsec">
+  <h3>Bemerkungen / offene Punkte</h3>
+  <textarea class="bem" id="bem" placeholder="Was ist offen geblieben? Auff&auml;lligkeiten?"></textarea>
   <div class="hint">Haken, Zeiten, Felder und Bemerkungen liegen <b>nur auf diesem Ger&auml;t</b>
     (Browserspeicher, ein Eintrag je Kalenderwoche). Es gibt keinen R&uuml;ckkanal &ndash;
-    zum Abschluss die Liste &uuml;ber den Knopf &bdquo;Teilen&ldquo; versenden &ndash;
-    das ist der Nachweis f&uuml;r den Durchlauf.</div>
-</main>
-<div class="fuss">
-  <button onclick="undo()">&#8617; Zur&uuml;ck</button>
-  <button class="teilen" onclick="teilen()">Teilen</button>
-  <button onclick="reset()">Reset</button>
-</div>
+    zum Abschluss die Liste &uuml;ber &bdquo;Teilen&ldquo; versenden &ndash; das ist der Nachweis f&uuml;r den Durchlauf.
+    Der Timer l&auml;uft von selbst: beim &Ouml;ffnen eines Punkts startet er, beim Abhaken stoppt er und der
+    n&auml;chste Punkt beginnt. F&uuml;r echte Pausen &#9208; dr&uuml;cken.</div>
+</section>
+<div class="next" id="botbar"></div>
 <script>
 var LS=(function(){try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return localStorage;}
 catch(e){var m={};return{getItem:function(k){return (k in m)?m[k]:null;},
 setItem:function(k,v){m[k]=String(v);},removeItem:function(k){delete m[k];}};}})();
 
+/* Schnelles Tippen hintereinander: iOS deutet zwei Tipps als Doppeltipp und zoomt. Nur ein
+   zweiter schneller Tipp AN DERSELBEN STELLE wird abgefangen und genau einmal als Klick
+   ausgefuehrt (Muster der Auffueller-Lagerliste). */
+(function(){
+  var ios=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(!ios)return;
+  var letzter=0,lx=0,ly=0,x0=0,y0=0,bewegt=false,sperreBis=0;
+  document.addEventListener('click',function(e){
+    if(e.isTrusted&&Date.now()<sperreBis&&Math.abs(e.clientX-lx)<45&&Math.abs(e.clientY-ly)<45){
+      sperreBis=0;e.preventDefault();e.stopPropagation();}},true);
+  document.addEventListener('touchstart',function(e){
+    if(e.touches.length===1){x0=e.touches[0].clientX;y0=e.touches[0].clientY;bewegt=false;}else bewegt=true;},{passive:true});
+  document.addEventListener('touchmove',function(e){var t=e.touches[0];
+    if(!t||Math.abs(t.clientX-x0)>10||Math.abs(t.clientY-y0)>10)bewegt=true;},{passive:true});
+  document.addEventListener('touchend',function(e){
+    if(bewegt||e.touches.length){letzter=0;return;}
+    var jetzt=Date.now();
+    var doppel=jetzt-letzter<400&&Math.abs(x0-lx)<45&&Math.abs(y0-ly)<45;
+    letzter=jetzt;lx=x0;ly=y0;
+    if(!doppel||!e.cancelable)return;
+    var t=e.target;
+    if(!t||!t.closest||t.closest('input,textarea,select'))return;
+    e.preventDefault();sperreBis=jetzt+350;
+    var z=t.closest('button,a,[onclick]');
+    if(z&&z.isConnected&&!z.disabled)z.click();},{passive:false});
+})();
+
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
   .replace(/"/g,'&quot;');}
+function vib(p){if(navigator.vibrate){try{navigator.vibrate(p);}catch(e){}}}
 
 /* ISO-Kalenderwoche, streng gerechnet (Donnerstag-Regel) */
 function isoWoche(d){var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));
@@ -158,26 +217,35 @@ function isoDatum(d){var m=String(d.getMonth()+1),t=String(d.getDate());
 var HEUTE=new Date(), W=isoWoche(HEUTE);
 var KEY='lagerarbeiten_'+W.jahr+'-KW'+(W.kw<10?'0'+W.kw:W.kw);
 
-var KATALOG=[], ALLE=[], state=null;
+var KATALOG=[], STEPS=[], state=null;
+/* Punkte-Wertung (Selbstkontrolle; reine Anzeige auf dem Geraet). Ohne Sollzeiten gibt es
+   keine Zeitpunkte: je erledigtem Punkt, je vollstaendigem Mengen-Block, Durchlauf komplett,
+   Liste geteilt. n. z. zaehlt nicht. */
+var PKT={schritt:2,ready:10,durchlauf:50,meld:25};
 
-function leer(){return {items:{},hist:[],zeit:{},lauf:null,kw:String(W.kw),datum:isoDatum(HEUTE),
-  bearb:'',bem:'',woche:KEY};}
-function laden(){try{var r=JSON.parse(LS.getItem(KEY)||'null');if(r&&r.items)return r;}catch(e){}
-  return leer();}
-function save(){try{LS.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function leer(){return {items:{},hist:[],zeit:{},aktiv:null,seit:null,pausiert:0,pauseSeit:null,pauseSum:0,
+  step:0,view:0,meld:{},ts:0,kw:String(W.kw),datum:isoDatum(HEUTE),bearb:'',bem:'',woche:KEY};}
+function laden(){var r=null;try{r=JSON.parse(LS.getItem(KEY)||'null');}catch(e){}
+  if(!r||!r.items)return leer();
+  var l=leer();for(var k in l){if(r[k]===undefined||r[k]===null){if(k!=='aktiv'&&k!=='seit'&&k!=='pauseSeit')r[k]=l[k];}}
+  if(!r.zeit)r.zeit={};if(!r.meld||typeof r.meld!=='object')r.meld={};
+  /* Migration des Stands vor 2026-10-05: lauf {nr,start} -> aktiv/seit */
+  if(r.lauf&&r.lauf.nr){r.aktiv=r.lauf.nr;r.seit=r.lauf.start;}
+  delete r.lauf;
+  if(r.aktiv===undefined)r.aktiv=null;if(r.seit===undefined)r.seit=null;
+  return r;}
+function save(){state.ts=Date.now();try{LS.setItem(KEY,JSON.stringify(state));}catch(e){}}
 
 /* Wochen aus frueheren Laeufen, die noch auf dem Geraet liegen */
 function alteWochen(){var r=[];
   try{for(var k=0;k<localStorage.length;k++){var n=localStorage.key(k);
-    if(n&&n.indexOf('lagerarbeiten_')===0&&n!==KEY)r.push(n);}}catch(e){}
+    if(n&&n.indexOf('lagerarbeiten_')===0&&n!==KEY&&n!=='lagerarbeiten_pin')r.push(n);}}catch(e){}
   return r;}
-
 function alteLoeschen(){var a=alteWochen();
   if(!a.length)return;
   if(!confirm('Gespeicherte Daten von '+a.length+' fr\u00fcheren Woche(n) l\u00f6schen?'))return;
   for(var i=0;i<a.length;i++){try{localStorage.removeItem(a[i]);}catch(e){}}
   pruefeAlte();}
-
 function pruefeAlte(){var a=alteWochen(),w=document.getElementById('warn');
   if(!a.length){w.className='';return;}
   document.getElementById('warntext').textContent=
@@ -185,158 +253,322 @@ function pruefeAlte(){var a=alteWochen(),w=document.getElementById('warn');
     a.map(function(n){return n.replace('lagerarbeiten_','');}).join(', ')+').';
   w.className='on';}
 
+/* ---- Status ---- */
 function st(nr){return state.items[nr]||0;}
-function setzen(nr,wert){state.hist.push({nr:nr,prev:st(nr)});
-  if(state.hist.length>200)state.hist.shift();
-  state.items[nr]=(st(nr)===wert)?0:wert;
-  if(state.items[nr]!==0)stoppeWenn(nr);
-  render();}
+function offen(i){var s=STEPS[i];return st(s.nr)===0;}
+/* Unterzeilen (Ready-Mengen) eines Punkts: Anzahl offen. Ein Punkt mit Mengen gilt erst als
+   fertig, wenn alle Mengen abgehakt sind (Projektanweisung 3.3; Codex-Befund P1.1). */
+function subOffen(i){var u=STEPS[i].u;if(!u||!u.length)return 0;var n=0;
+  for(var k=0;k<u.length;k++){if(st(u[k].id)!==1)n++;}return n;}
+/* Durchlauf komplett = kein Punkt offen UND kein erledigter Punkt mit offenen Mengen */
+function komplett(){if(naechsterOffen(0)>=0)return false;
+  for(var i=0;i<STEPS.length;i++){if(st(STEPS[i].nr)===1&&subOffen(i)>0)return false;}return true;}
+function naechsterOffen(from){
+  for(var i=from;i<STEPS.length;i++)if(offen(i))return i;
+  for(var j=0;j<from;j++)if(offen(j))return j;
+  return -1;}
 
-/* Zeiterfassung je Punkt: state.zeit[nr] = gesammelte ms, state.lauf = {nr,start}
-   fuer den einen laufenden Timer (bleibt ueber Neuladen erhalten). */
+/* ---- Timer: state.zeit[nr] = gesammelte ms; state.aktiv/seit = der eine laufende Timer.
+   Weil nur die Startzeit gespeichert wird, laeuft er auch bei geschlossener Seite weiter. ---- */
 function zeitMs(nr){var z=(state.zeit&&state.zeit[nr])||0;
-  if(state.lauf&&state.lauf.nr===nr)z+=Math.max(0,Date.now()-state.lauf.start);return z;}
+  if(state.aktiv===nr&&state.seit)z+=Math.max(0,Date.now()-state.seit);return z;}
+function gesamtMs(){var t=0;for(var i=0;i<STEPS.length;i++)t+=zeitMs(STEPS[i].nr);return t;}
 function fmt(ms){var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),x=s%60;
   var p=function(n){return (n<10?'0':'')+n;};return (h?h+':'+p(m):p(m))+':'+p(x);}
-function stoppen(){if(!state.lauf)return;state.zeit=state.zeit||{};
-  state.zeit[state.lauf.nr]=zeitMs(state.lauf.nr);state.lauf=null;}
-function stoppeWenn(nr){if(state.lauf&&state.lauf.nr===nr)stoppen();}
-function timer(nr,ev){if(ev)ev.stopPropagation();
-  var lief=!!(state.lauf&&state.lauf.nr===nr);stoppen();
-  if(!lief)state.lauf={nr:nr,start:Date.now()};render();}
-function gesamtMs(){var t=0;for(var i=0;i<ALLE.length;i++)t+=zeitMs(ALLE[i].nr);return t;}
-function timerKnopf(nr){var an=!!(state.lauf&&state.lauf.nr===nr),z=zeitMs(nr);
-  return '<button class="tm'+(an?' an':(z?' hat':''))+'" data-tnr="'+esc(nr)+'" onclick="timer(\''+nr+'\',event)">'+
-    (an?'&#10074;&#10074;':'&#9654;')+' <span class="tz">'+fmt(z)+'</span></button>';}
-function tick(){if(!state)return;
-  var els=document.querySelectorAll('[data-tnr]');
-  for(var i=0;i<els.length;i++){els[i].querySelector('.tz').textContent=fmt(zeitMs(els[i].getAttribute('data-tnr')));}
-  document.getElementById('gz').textContent='⏱ '+fmt(gesamtMs());}
+function fmtM(ms){return (Math.round(ms/6000)/10).toLocaleString('de-DE',{minimumFractionDigits:1,maximumFractionDigits:1});}
+function stopTimer(){if(state.aktiv&&state.seit){state.zeit[state.aktiv]=zeitMs(state.aktiv);}
+  state.aktiv=null;state.seit=null;}
+function endePause(){if(state.pausiert&&state.pauseSeit)state.pauseSum+=(Date.now()-state.pauseSeit);
+  state.pausiert=0;state.pauseSeit=null;}
+function pauseMs(){return (state.pauseSum||0)+(state.pausiert&&state.pauseSeit?(Date.now()-state.pauseSeit):0);}
+function starte(i){state.step=i;state.aktiv=STEPS[i].nr;state.seit=Date.now();}
+/* Anker: ohne laufenden Timer und ohne Pause startet der aktuelle Punkt, wenn er offen ist,
+   sonst der erste offene (Auto-Start beim Oeffnen, Muster Lagerliste). */
+function ankern(){
+  if(state.step>=STEPS.length)state.step=0;
+  if(state.aktiv&&!STEPS.some(function(s){return s.nr===state.aktiv;})){state.aktiv=null;state.seit=null;}
+  if(state.aktiv){var k=STEPS.findIndex(function(s){return s.nr===state.aktiv;});if(k>=0)state.step=k;return;}
+  if(state.pausiert)return;
+  var n=offen(state.step)?state.step:naechsterOffen(0);
+  if(n>=0)starte(n);}
+function laufe(i){endePause();stopTimer();
+  var s=STEPS[i];
+  if(st(s.nr)!==0){state.hist.push({nr:s.nr,prev:st(s.nr)});if(state.hist.length>200)state.hist.shift();state.items[s.nr]=0;}
+  starte(i);
+  if(state.view!==0){state.view=0;springTop=true;}
+  scrollZiel='cur';save();render();}
+function weiter(von){var n=naechsterOffen(von+1);
+  if(n<0){state.aktiv=null;state.seit=null;springTop=true;}else{starte(n);scrollZiel='cur';}
+  save();render();}
+function togglePause(){
+  if(!state.pausiert&&naechsterOffen(0)<0)return;
+  if(state.pausiert){endePause();var s=STEPS[state.step];if(st(s.nr)===0){state.aktiv=s.nr;state.seit=Date.now();}}
+  else{stopTimer();state.pausiert=1;state.pauseSeit=Date.now();}
+  vib(20);save();render();}
+
+/* ---- Haken ---- */
+function setzen(nr,wert){var i=STEPS.findIndex(function(s){return s.nr===nr;});
+  state.hist.push({nr:nr,prev:st(nr)});if(state.hist.length>200)state.hist.shift();
+  var neu=(st(nr)===wert)?0:wert;state.items[nr]=neu;
+  if(neu!==0){if(state.aktiv===nr)stopTimer();endePause();vib(neu===2?[40,60,40]:30);
+    if(i===state.step||i>=0)weiter(i);else{save();render();}}
+  else{save();render();}}
+function fertig(){if(subOffen(state.step)>0)return;setzen(STEPS[state.step].nr,1);}
+function nz(){var s=STEPS[state.step];
+  if(s.u&&s.u.length&&!confirm('Diesen Punkt mit allen '+s.u.length+' Mengen als \u201en. z.\u201c (nicht zutreffend) kennzeichnen?'))return;
+  setzen(s.nr,2);}
+/* Antippen in der Ablauf-Liste: offene Punkte werden direkt aktiv; erledigte oder n. z.
+   erst nach Bestaetigung wieder geoeffnet (Codex-Befund P2.4). */
+function springe(i){if(st(STEPS[i].nr)!==0&&!confirm(STEPS[i].nr+' ist bereits '+(st(STEPS[i].nr)===1?'erledigt':'n. z.')+'. Wieder \u00f6ffnen und Timer starten?'))return;laufe(i);}
+function stepZurueck(){if(state.step>0)laufe(state.step-1);}
 function undo(){if(!state)return;var h=state.hist.pop();if(!h)return;
   if(h.multi){for(var k=h.multi.length-1;k>=0;k--)state.items[h.multi[k].nr]=h.multi[k].prev;}
   else{state.items[h.nr]=h.prev;}
-  render();}
+  /* Wurde der laufende Punkt wieder erledigt, Timer loslassen; sonst Anker neu setzen */
+  if(state.aktiv&&st(state.aktiv)!==0)stopTimer();
+  if(!state.pausiert&&!state.aktiv){var i=STEPS.findIndex(function(s){return s.nr===(h.multi?h.multi[h.multi.length-1].nr:h.nr);});
+    if(i>=0&&offen(i))starte(i);else ankern();}
+  vib(15);save();render();}
 
-/* Unterzeilen (Ready-Mengen) - einzeln abhakbar */
-function unterliste(b,i){var it=KATALOG[b].items[i],u=it.u;if(!u||!u.length)return '';
-  var h='<div class="sub">',gz='';
-  for(var j=0;j<u.length;j++){var r=u[j],s=st(r.id);
-    if(r.g&&r.g!==gz){h+='<div class="ut">'+esc(r.g)+'</div>';gz=r.g;}
-    h+='<div class="z'+(s===1?' done':'')+'" onclick="subSetzen('+b+','+i+','+j+')">'+
-       '<span class="bx">'+(s===1?'&#10003;':'')+'</span><span class="m">'+esc(r.m)+
-       '</span><span class="zt">'+esc(r.t)+'</span></div>';}
-  return h+'</div>';}
-
-/* Unterzeile umschalten; sind alle erledigt, wird der Hauptpunkt mit abgehakt,
-   wird eine wieder geoeffnet, ist der Hauptpunkt nicht mehr erledigt. Ein Undo
-   nimmt beides gemeinsam zurueck. */
-function subSetzen(b,i,j){var it=KATALOG[b].items[i],r=it.u[j];
+/* Unterzeilen (Ready-Mengen) - einzeln abhakbar; sind alle erledigt, wird der Hauptpunkt
+   mit abgehakt (und es geht weiter), wird eine wieder geoeffnet, ist der Hauptpunkt wieder
+   offen. Ein Undo nimmt beides gemeinsam zurueck. */
+function subSetzen(i,j){var it=STEPS[i],r=it.u[j];
   var e={multi:[{nr:r.id,prev:st(r.id)},{nr:it.nr,prev:st(it.nr)}]};
   var neu=(st(r.id)===1)?0:1;state.items[r.id]=neu;
   var alle=true;for(var k=0;k<it.u.length;k++){if(st(it.u[k].id)!==1){alle=false;break;}}
-  if(alle&&st(it.nr)===0){state.items[it.nr]=1;stoppeWenn(it.nr);}
-  if(neu===0&&st(it.nr)===1)state.items[it.nr]=0;
-  state.hist.push(e);if(state.hist.length>200)state.hist.shift();render();}
+  state.hist.push(e);if(state.hist.length>200)state.hist.shift();
+  if(alle&&st(it.nr)===0){state.items[it.nr]=1;if(state.aktiv===it.nr)stopTimer();endePause();vib(30);weiter(i);return;}
+  if(neu===0&&st(it.nr)===1){state.items[it.nr]=0;if(!state.aktiv&&!state.pausiert)starte(i);}
+  vib(15);save();render();}
+function unterliste(i){var it=STEPS[i],u=it.u;if(!u||!u.length)return '';
+  var h='<div class="sub">',gz='';
+  for(var j=0;j<u.length;j++){var r=u[j],s=st(r.id);
+    if(r.g&&r.g!==gz){h+='<div class="ut">'+esc(r.g)+'</div>';gz=r.g;}
+    h+='<div class="z'+(s===1?' done':'')+'" onclick="subSetzen('+i+','+j+')">'+
+       '<span class="bx">'+(s===1?'&#10003;':'')+'</span><span class="m">'+esc(r.m)+
+       '</span><span class="zt">'+esc(r.t)+'</span></div>';}
+  return h+'</div><div class="subhint">Jede Menge einzeln antippen &ndash; sind alle erledigt, ist der Punkt fertig.</div>';}
 
-function naechste(){for(var i=0;i<ALLE.length;i++){if(!st(ALLE[i].nr))return ALLE[i];}return null;}
+/* ---- Punkte ---- */
+/* Signatur des geteilten Stands: alle Berichtsdaten (Haken, Unterzeilen, Felder, Bemerkungen,
+   Zeiten auf volle Minuten) - aendert sich etwas davon, gilt der Bericht als veraltet. */
+function listeSig(){var z={};for(var i=0;i<STEPS.length;i++){z[STEPS[i].nr]=Math.floor(zeitMs(STEPS[i].nr)/60000);}
+  var s=JSON.stringify([state.items,z,state.kw,state.datum,state.bearb,state.bem,Math.floor(pauseMs()/60000)]);
+  var h=5381;for(var i=0;i<s.length;i++)h=((h*33)^s.charCodeAt(i))>>>0;return 'v2-'+h.toString(16);}
+function punkte(){
+  var done=0,mitU=0,readyOk=0;
+  for(var i=0;i<STEPS.length;i++){var s=STEPS[i];if(st(s.nr)===1)done++;
+    if(s.u&&s.u.length){mitU++;if(subOffen(i)===0)readyOk++;}}
+  var fertigAlle=komplett();
+  var geteilt=!!state.meld.liste&&state.meld.liste===listeSig();
+  var rows=[
+    {t:'Erledigte Punkte',sub:done+' von '+STEPS.length+' (n. z. z\u00e4hlt nicht)',p:done*PKT.schritt,max:STEPS.length*PKT.schritt},
+    {t:'Ready-Mengen vollst\u00e4ndig',sub:readyOk+' von '+mitU+' Mengen-Bl\u00f6cken',p:readyOk*PKT.ready,max:mitU*PKT.ready},
+    {t:'Durchlauf komplett',sub:fertigAlle?'geschafft':'noch offen',p:fertigAlle?PKT.durchlauf:0,max:PKT.durchlauf},
+    {t:'Checkliste geteilt',sub:geteilt?'gesendet':(state.meld.liste?'Stand ge\u00e4ndert \u2013 erneut senden':'noch senden'),p:geteilt?PKT.meld:0,max:PKT.meld}];
+  return {rows:rows,sum:rows.reduce(function(a,r){return a+r.p;},0),max:rows.reduce(function(a,r){return a+r.max;},0)};}
+var pktAlt=null;
+function pktPop(plus,summe){
+  var alt=document.getElementById('pktpop');if(alt)alt.remove();
+  document.querySelectorAll('.pktteil').forEach(function(x){x.remove();});
+  var gross=plus>=10,riesig=plus>=50;
+  var el=document.createElement('div');el.id='pktpop';if(gross)el.className='gross';
+  el.textContent=(riesig?'\ud83c\udf89 ':'')+'+'+plus+' \u2605';
+  var sm=document.createElement('small');sm.textContent=summe+' Punkte';el.appendChild(sm);
+  el.addEventListener('animationend',function(){el.remove();});
+  document.body.appendChild(el);setTimeout(function(){if(el.parentNode)el.remove();},1600);
+  var n=riesig?18:gross?9:0,zeichen=['\u2605','\u2728','\u2b50','\ud83c\udf89'];
+  for(var i=0;i<n;i++){var p=document.createElement('span');p.className='pktteil';p.textContent=zeichen[i%zeichen.length];
+    var w=2*Math.PI*i/n+Math.random()*0.5,d=(riesig?70:45)+Math.random()*50;
+    p.style.setProperty('--dx',Math.round(Math.cos(w)*d)+'px');p.style.setProperty('--dy',Math.round(Math.sin(w)*d-20)+'px');
+    p.style.setProperty('--rot',Math.round(Math.random()*360-180)+'deg');p.style.color='#ffd54a';
+    p.addEventListener('animationend',function(){this.remove();});document.body.appendChild(p);
+    (function(q){setTimeout(function(){if(q.parentNode)q.remove();},1500);})(p);}}
+
+/* ---- Renderer ---- */
+var springTop=true,scrollZiel=null;
+function setKopf(){document.documentElement.style.setProperty('--kopf',((document.querySelector('header')||{}).offsetHeight||0)+'px');}
+window.addEventListener('resize',setKopf);
+function scrollNach(y0){
+  if(springTop){window.scrollTo(0,0);springTop=false;scrollZiel=null;return;}
+  if(scrollZiel==='cur'){scrollZiel=null;
+    var el=document.querySelector('.srow.cur'),karte=document.querySelector('.stepcard');
+    if(el){var kopf=(document.querySelector('header')||{}).offsetHeight||0,kh=karte?karte.offsetHeight+20:0;
+      window.scrollTo(0,Math.max(0,el.getBoundingClientRect().top+window.scrollY-kopf-kh-44));return;}}
+  scrollZiel=null;window.scrollTo(0,y0);}
+function zeigeView(v){state.view=v;springTop=true;save();render();}
+function timerStreifen(s){
+  var pauseH=state.pausiert?'<div class="pausenote" id="pausenote">\u23f8 PAUSE \u2013 Timer angehalten ('+fmtM(pauseMs())+' min) \u00b7 \u25b6 zum Weitermachen</div>':'';
+  return '<div class="tmrrow"><span class="tmr'+(state.pausiert?' pause':'')+'" id="tmr">'+fmt(zeitMs(s.nr))+'</span>'+
+    '<span class="soll">Gesamt<br><b>'+fmtM(gesamtMs())+' min</b></span></div>'+pauseH;}
+function ablaufListe(h){
+  var grp=null;h+='<h3>Ablauf</h3><div class="steps">';
+  for(var i=0;i<STEPS.length;i++){var s=STEPS[i];
+    if(s.blk!==grp){h+='</div><div class="sgroup">'+esc(s.blk)+'</div><div class="steps">';grp=s.blk;}
+    var ms=zeitMs(s.nr),sv=st(s.nr);
+    var cls='srow'+(i===state.step?' cur':'')+(sv===1?' ok':'')+(sv===2?' sk':'');
+    h+='<div class="'+cls+'" onclick="springe('+i+')"><span class="snr">'+esc(s.nr)+'</span><span class="snm">'+esc(s.t)+
+       (s.g?'<small>'+esc(s.g)+'</small>':'')+'</span><span class="szeit">'+(ms>=1000?fmt(ms):(sv===2?'n. z.':''))+'</span></div>';}
+  h+='</div><button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
+  return h;}
+function zeitUebersicht(){
+  var h='<h3>Zeit-\u00dcbersicht</h3><div class="steps">';
+  h+='<div class="srow kopf"><span class="snr"></span><span class="snm">Punkt</span><span class="z3">Ist min</span></div>';
+  var grp=null,bs=0;
+  for(var i=0;i<STEPS.length;i++){var s=STEPS[i];
+    if(s.blk!==grp){if(grp!==null)h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">'+esc(grp)+'</span><span class="z3">'+fmtM(bs)+'</span></div>';grp=s.blk;bs=0;}
+    var ms=zeitMs(s.nr);bs+=ms;
+    h+='<div class="srow"><span class="snr">'+esc(s.nr)+'</span><span class="snm">'+esc(s.t)+(st(s.nr)===2?'<small>n. z.</small>':'')+
+       '</span><span class="z3'+(ms>0?' istok':'')+'">'+fmtM(ms)+'</span></div>';}
+  h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">'+esc(grp)+'</span><span class="z3">'+fmtM(bs)+'</span></div>';
+  h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">GESAMT</span><span class="z3">'+fmtM(gesamtMs())+'</span></div>';
+  h+='<div class="srow"><span class="snr">\u23f8</span><span class="snm">Pausen<small>laufen separat, z\u00e4hlen nicht ins Ist</small></span><span class="z3">'+fmtM(pauseMs())+'</span></div>';
+  h+='</div><div class="hint">Keine Sollzeiten hinterlegt \u2013 die Zeiten dienen der Selbstkontrolle und stehen im Teilen-Bericht.</div>';
+  h+='<button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
+  h+='<button class="report r" onclick="reset()">Reset \u2013 diese Woche zur\u00fccksetzen</button>';
+  return h;}
+function punkteAnsicht(){var pt=punkte();
+  var h='<div class="alldone">\u2605 '+pt.sum+' Punkte<div class="pktmax">von '+pt.max+' m\u00f6glichen</div></div><div class="steps">';
+  for(var i=0;i<pt.rows.length;i++){var r=pt.rows[i];
+    h+='<div class="srow pkt"><span class="snm">'+esc(r.t)+'<small>'+esc(r.sub||'')+'</small></span><span class="z3'+(r.max>0&&r.p>=r.max?' istok':'')+'">'+r.p+' / '+r.max+'</span></div>';}
+  h+='</div><div class="hint">Spielwertung zur Selbstkontrolle. Je erledigtem Punkt '+PKT.schritt+', je vollst\u00e4ndigem Mengen-Block '+PKT.ready+
+     ', Durchlauf komplett '+PKT.durchlauf+', Liste geteilt '+PKT.meld+'. Zeiten z\u00e4hlen nicht (keine Sollzeiten).</div>';
+  return h;}
 
 function render(){
-  var done=0,nz=0;
-  for(var i=0;i<ALLE.length;i++){var s=st(ALLE[i].nr);if(s===1)done++;else if(s===2)nz++;}
-  var offen=ALLE.length-done-nz, fertig=done+nz;
-  document.getElementById('stand').innerHTML=done+' &#10003; &middot; '+nz+' n.z. &middot; '+offen+' offen';
-  document.getElementById('gz').textContent='⏱ '+fmt(gesamtMs());
-  var p=ALLE.length?Math.round(fertig*100/ALLE.length):0;
+  var y0=window.scrollY||0;
+  var done=0,nzn=0;
+  for(var i=0;i<STEPS.length;i++){var s=st(STEPS[i].nr);if(s===1)done++;else if(s===2)nzn++;}
+  var off=STEPS.length-done-nzn,fertigN=done+nzn;
+  var pt=punkte(),pktPlus=(pktAlt!==null&&pt.sum>pktAlt)?pt.sum-pktAlt:0;pktAlt=pt.sum;
+  if(pktPlus)pktPop(pktPlus,pt.sum);
+  document.getElementById('stand').innerHTML='<b>'+done+'</b> \u2713 \u00b7 <i>'+nzn+'</i> n. z. \u00b7 '+off+' offen';
+  document.getElementById('zeitges').innerHTML=(state.pausiert?'\u23f8 ':'\u23f1 ')+'<b id="gz">'+fmtM(gesamtMs())+'</b> min';
+  var p=STEPS.length?Math.round(fertigN*100/STEPS.length):0;
   document.getElementById('proz').textContent=p+' %';
   document.getElementById('balken').style.width=p+'%';
-  document.getElementById('wchip').textContent='KW '+W.kw+' / '+W.jahr;
-  document.getElementById('wchip').className='chip'+(p===100?' neu':'');
-
-  var n=naechste(),j=document.getElementById('jetzt');
-  if(n){j.className='jetzt';
-    j.innerHTML='<div class="lab">JETZT DRAN</div><div class="nr">'+esc(n.nr)+
-      (n.g?' &middot; '+esc(n.g):'')+'</div><div class="txt">'+esc(n.t)+'</div>'+timerKnopf(n.nr)+unterliste(n.b,n.i)+
-      '<div class="akt"><button class="b-ok" onclick="setzen(\''+n.nr+'\',1)">&#10003; Erledigt</button>'+
-      '<button class="b-nz" onclick="setzen(\''+n.nr+'\',2)">n. z.</button></div>';
-  }else{j.className='jetzt fertig';
-    j.innerHTML='<div class="lab">DURCHLAUF</div><div class="txt">Alle Punkte abgearbeitet &#10003;</div>'+
-      '<div class="hint" style="padding:0">Bemerkungen erg&auml;nzen, dann die Liste &uuml;ber '
-      '&bdquo;Teilen&ldquo; versenden (letzter Punkt).</div>';}
-
+  var chip=document.getElementById('wchip');chip.textContent='KW '+W.kw+' / '+W.jahr;chip.className='agebadge'+(p===100?' fertig':'');
+  document.getElementById('navzone').innerHTML=
+    '<div class="navtabs"><div class="navtab'+(state.view===0?' act':'')+'" onclick="zeigeView(0)">Ablauf</div>'+
+    '<div class="navtab'+(state.view===2?' act':'')+'" onclick="zeigeView(2)">\u23f1 Zeit</div>'+
+    '<div class="navtab pkt'+(state.view===3?' act':'')+(pktPlus?' neu':'')+'" onclick="zeigeView(3)">\u2605 '+pt.sum+'</div></div>';
+  var main=document.getElementById('main'),bot=document.getElementById('botbar'),bem=document.getElementById('bemsec');
+  bem.style.display=(state.view===0)?'':'none';
+  if(state.view===2){main.innerHTML=zeitUebersicht();
+    bot.innerHTML='<button class="stepback" onclick="zeigeView(0)">\u2039 Ablauf</button><div class="nx"><div class="lbl">ZEIT-\u00dcBERSICHT</div></div>';
+    save();scrollNach(y0);return;}
+  if(state.view===3){main.innerHTML=punkteAnsicht();
+    bot.innerHTML='<button class="stepback" onclick="zeigeView(0)">\u2039 Ablauf</button><div class="nx"><div class="lbl">PUNKTE</div></div>';
+    save();scrollNach(y0);return;}
   var h='';
-  for(var b=0;b<KATALOG.length;b++){
-    h+='<section><div class="blk">'+esc(KATALOG[b].titel)+'</div>';
-    var gz='';
-    for(var i=0;i<KATALOG[b].items.length;i++){
-      var it=KATALOG[b].items[i],s=st(it.nr);
-      if(it.g&&it.g!==gz){h+='<div class="grp">'+esc(it.g)+'</div>';gz=it.g;}
-      if(!it.g)gz='';
-      var kl='item'+(s===1?' done':(s===2?' nz':''));
-      var mark=(s===1?'&#10003;':(s===2?'n.z.':''));
-      h+='<div class="'+kl+'" onclick="setzen(\''+it.nr+'\',1)">'+
-         '<div class="box">'+mark+'</div><div class="nr">'+esc(it.nr)+'</div>'+
-         '<div class="t">'+esc(it.t)+'</div>'+timerKnopf(it.nr)+'</div>'+unterliste(b,i);
-    }
-    h+='</section>';
-  }
-  document.getElementById('listen').innerHTML=h;
-  save();
-}
+  if(komplett()){
+    h+='<div class="alldone">\u2705 Alle Punkte abgearbeitet<div class="pktmax">\u23f1 '+fmtM(gesamtMs())+' min \u00b7 Bemerkungen erg\u00e4nzen, dann teilen</div></div>';
+    h+='<button class="report" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
+    h=ablaufListe(h);main.innerHTML=h;
+    bot.innerHTML='<button class="stepback" onclick="stepZurueck()">\u2039 Punkt</button><button class="stepback" onclick="undo()" '+(state.hist.length?'':'disabled')+'>\u21a9</button><div class="nx"><div class="lbl">DURCHLAUF FERTIG \ud83c\udf89</div></div>';
+    save();scrollNach(y0);return;}
+  if(naechsterOffen(0)<0){
+    /* kein offener Punkt, aber ein erledigter Punkt mit offenen Mengen: dorthin */
+    for(var q=0;q<STEPS.length;q++){if(st(STEPS[q].nr)===1&&subOffen(q)>0){state.step=q;break;}}}
+  var s=STEPS[state.step];setKopf();
+  if(springTop===false&&scrollZiel===null)scrollZiel='cur';
+  h+='<div class="stepcard fest"><div class="shead"><span class="kbadge">'+esc(s.nr)+'</span><span class="stitle">'+esc(s.t)+'</span>'+
+     '<span class="ssub">'+esc(s.blk)+(s.g?' \u00b7 '+esc(s.g):'')+'</span></div>'+timerStreifen(s)+unterliste(state.step)+'</div>';
+  h=ablaufListe(h);main.innerHTML=h;
+  var pBtn='<button class="stepback pause'+(state.pausiert?' on':'')+'" onclick="togglePause()">'+(state.pausiert?'\u25b6':'\u23f8')+'</button>';
+  bot.innerHTML='<button class="stepback" onclick="stepZurueck()" '+(state.step?'':'disabled')+'>\u2039</button>'+pBtn+
+    '<button class="stepback" onclick="undo()" '+(state.hist.length?'':'disabled')+'>\u21a9</button>'+
+    '<button class="skipbtn" onclick="nz()">n. z.</button>'+
+    (subOffen(state.step)>0?'<button class="fertigbtn" disabled>Noch '+subOffen(state.step)+' Mengen \u2026</button>'
+      :'<button class="fertigbtn" onclick="fertig()">\u2713 Fertig \u2013 weiter</button>');
+  save();scrollNach(y0);}
+
+/* Sekunden-Tick: nur Timer-Anzeigen aktualisieren (kein Voll-Render), alle 10 s speichern. */
+var tickN=0;
+function tick(){if(!state)return;
+  var gz=document.getElementById('gz');if(gz)gz.textContent=fmtM(gesamtMs());
+  if(state.view!==0)return;
+  var el=document.getElementById('tmr'),s=STEPS[state.step];
+  if(el&&s)el.textContent=fmt(zeitMs(s.nr));
+  var pn=document.getElementById('pausenote');
+  if(pn&&state.pausiert)pn.textContent='\u23f8 PAUSE \u2013 Timer angehalten ('+fmtM(pauseMs())+' min) \u00b7 \u25b6 zum Weitermachen';
+  if((++tickN%10)===0)save();}
 
 function feld(id,prop){var el=document.getElementById(id);el.value=state[prop]||'';
   el.addEventListener('input',function(){state[prop]=el.value;save();});}
-
 function reset(){if(!confirm('Alle Haken, Zeiten, Felder und Bemerkungen dieser Woche zur\u00fccksetzen?'))return;
   state=leer();
   document.getElementById('f_kw').value=state.kw;
   document.getElementById('f_datum').value=state.datum;
   document.getElementById('f_bearb').value='';
   document.getElementById('bem').value='';
-  render();}
+  pktAlt=null;ankern();springTop=true;render();}
 
+/* ---- Bericht (Status + Zeit-Protokoll) ---- */
 function bericht(){
-  var z=[(document.getElementById('titel').textContent||'Checkliste')+
-         ' \u2013 KW '+(state.kw||W.kw)+' / '+W.jahr,
+  var z=[(document.getElementById('titel').textContent||'Checkliste')+' \u2013 KW '+(state.kw||W.kw)+' / '+W.jahr,
          'Datum: '+(state.datum||'')+'   Bearbeiter: '+(state.bearb||'\u2013'),''];
-  for(var b=0;b<KATALOG.length;b++){
-    z.push(KATALOG[b].titel);
-    for(var i=0;i<KATALOG[b].items.length;i++){var it=KATALOG[b].items[i],s=st(it.nr);
-      var zm=zeitMs(it.nr);
-      z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (n. z.)':'')+
-             (zm?'   ⏱ '+fmt(zm):''));
-      if(it.u){for(var j=0;j<it.u.length;j++){var r=it.u[j];
-        z.push('        ['+(st(r.id)===1?'x':' ')+'] '+r.m+'  '+r.t);}}}
-    z.push('');}
-  z.push('Zeit gesamt: '+fmt(gesamtMs())+(state.lauf?'   (Timer '+state.lauf.nr+' läuft noch)':''));
+  var grp=null;
+  for(var i=0;i<STEPS.length;i++){var it=STEPS[i],s=st(it.nr);
+    if(it.blk!==grp){if(grp!==null)z.push('');z.push(it.blk);grp=it.blk;}
+    var ms=zeitMs(it.nr);
+    z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (n. z.)':(s===0?'   (offen)':''))+(ms>=1000?'   \u23f1 '+fmtM(ms)+' min':''));
+    if(it.u){for(var j=0;j<it.u.length;j++){var r=it.u[j];z.push('        ['+(st(r.id)===1?'x':' ')+'] '+r.m+'  '+r.t);}}}
   z.push('');
-  z.push('Bemerkungen / offene Punkte:');
-  z.push(state.bem?state.bem:'\u2013');
+  z.push('ZEIT-PROTOKOLL: Gesamt '+fmtM(gesamtMs())+' min \u00b7 Pausen '+fmtM(pauseMs())+' min (nicht enthalten)'+
+         (state.aktiv?'   (Timer '+state.aktiv+' l\u00e4uft noch)':''));
+  var offenM=0;for(var q=0;q<STEPS.length;q++)offenM+=subOffen(q);
+  z.push('Punkte: '+punkte().sum+' / '+punkte().max+(komplett()?'   (Durchlauf komplett)':'   (Durchlauf NICHT komplett'+(offenM?', '+offenM+' Mengen offen':'')+')'));
+  z.push('');z.push('Bemerkungen / offene Punkte:');z.push(state.bem?state.bem:'\u2013');
   return z.join('\n');}
-
-function teilen(){var t=bericht();
-  if(navigator.share){navigator.share({title:document.getElementById('titel').textContent,text:t})
-    .catch(function(){});return;}
-  if(navigator.clipboard){navigator.clipboard.writeText(t).then(function(){alert('In die Zwischenablage kopiert.');},
-    function(){alert(t);});return;}
-  alert(t);}
+/* Rueckgabe 'geteilt' = ueber das Teilen-Menue versendet; 'kopiert' = nur in die Zwischenablage
+   (gilt NICHT als Versandnachweis, Codex-Befund P1.2); false = abgebrochen/nicht moeglich. */
+function teileText(titel,txt){
+  if(navigator.share){return navigator.share({title:titel,text:txt}).then(function(){return 'geteilt';},function(e){
+    if(e&&e.name==='AbortError')return false;return kopiere(txt);});}
+  return kopiere(txt);}
+function kopiere(txt){
+  if(navigator.clipboard){return navigator.clipboard.writeText(txt).then(function(){alert('In die Zwischenablage kopiert \u2013 in Mail/Chat einf\u00fcgen. Erst der Versand ist der Nachweis.');return 'kopiert';},
+    function(){alert(txt);return 'kopiert';});}
+  alert(txt);return Promise.resolve('kopiert');}
+function teilen(){var sig=listeSig();
+  teileText(document.getElementById('titel').textContent,bericht()).then(function(r){
+    if(r==='geteilt'){state.meld.liste=sig;save();render();}});}
 
 /* Start, sobald der Katalog da ist (lokal sofort, im Repo nach der Entschluesselung) */
 function startApp(d){
   KATALOG=d.bloecke||[];
   if(d.titel){document.getElementById('titel').textContent=d.titel;document.title=d.titel;}
-  ALLE=[];
+  STEPS=[];
   for(var b=0;b<KATALOG.length;b++){for(var i=0;i<KATALOG[b].items.length;i++){
-    var it=KATALOG[b].items[i];ALLE.push({b:b,i:i,nr:it.nr,t:it.t,g:it.g,u:it.u});}}
+    var it=KATALOG[b].items[i];STEPS.push({nr:it.nr,t:it.t,g:it.g,u:it.u,blk:KATALOG[b].titel});}}
   var hw=document.getElementById('hinweis');
   if(d.hinweis){hw.textContent=d.hinweis;hw.className='on';}else{hw.className='';}
   state=laden();
   feld('f_kw','kw');feld('f_datum','datum');feld('f_bearb','bearb');feld('bem','bem');
-  if(!state.zeit)state.zeit={};
-  if(state.lauf===undefined)state.lauf=null;
   pruefeAlte();
+  langeWeg();
+  ankern();
   render();
   setInterval(tick,1000);
+  if('wakeLock' in navigator){var wl=function(){navigator.wakeLock.request('screen').catch(function(){
+      var h=document.querySelector('#bemsec .hint');if(h&&h.textContent.indexOf('Bildschirm')<0)h.insertAdjacentHTML('beforeend',' <b>Hinweis: Wach-Halten des Bildschirms nicht m\u00f6glich \u2013 bei Pausen \u23f8 dr\u00fccken.</b>');});};wl();
+    document.addEventListener('visibilitychange',function(){if(!document.hidden)wl();});}
 }
+/* Lief ein Timer waehrend die Seite laenger als 15 Minuten nicht gespeichert hat (Handy weggelegt,
+   Seite geschlossen), nachfragen: Zeit uebernehmen oder als Pause werten (Codex-Befund P2.3). */
+function langeWeg(){
+  if(!state.aktiv||!state.seit||!state.ts)return;
+  var weg=Date.now()-state.ts;
+  if(weg<15*60000)return;
+  var min=Math.round(weg/60000);
+  if(confirm('Der Timer von '+state.aktiv+' lief '+min+' Minuten weiter, w\u00e4hrend die Liste nicht offen war.\n\nOK = diese Zeit als PAUSE werten (nicht dem Punkt anrechnen)\nAbbrechen = Zeit dem Punkt zurechnen')){
+    var bis=Math.max(state.seit,state.ts);
+    state.zeit[state.aktiv]=(state.zeit[state.aktiv]||0)+Math.max(0,bis-state.seit);
+    state.pauseSum=(state.pauseSum||0)+(Date.now()-bis);
+    state.seit=Date.now();}
+  save();}
 
 
 /* Datenlos ausgeliefert: Katalog kommt verschluesselt aus data.enc.json und wird
@@ -370,9 +602,13 @@ window.pinGo=async function(){
 document.addEventListener('keydown',function(e){
   if(e.key==='Enter'&&document.getElementById('pinov'))pinGo();});
 (async function(){
-  var gespeichert=LS.getItem('lagerarbeiten_pin');
-  if(gespeichert){try{var d=await versuche(gespeichert);
-    document.getElementById('pinov').remove();startApp(d);return;}catch(e){}}
+  /* Gespeicherte PIN dieser Liste; ersatzweise die auf demselben Geraet gespeicherte PIN der
+     Auffueller-Liste PROBIEREN (gleiche Origin). Nur ein Entschluesselungsversuch - die PIN
+     wird weder angezeigt noch kopiert; passt sie nicht, erscheint die Abfrage. */
+  var kand=[LS.getItem('lagerarbeiten_pin'),LS.getItem('packliste_pin')];
+  for(var i=0;i<kand.length;i++){if(!kand[i])continue;
+    try{var d=await versuche(kand[i]);if(i>0)LS.setItem('lagerarbeiten_pin',kand[i]);
+      document.getElementById('pinov').remove();startApp(d);return;}catch(e){}}
   document.getElementById('pinov').style.display='flex';
 })();
 
