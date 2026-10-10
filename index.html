@@ -67,7 +67,9 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px s
 .sub .z:last-child{border-bottom:0}
 .sub .bx{flex:0 0 22px;height:22px;border-radius:6px;border:2px solid #40566a;display:flex;
   align-items:center;justify-content:center;font-size:13px;font-weight:700}
-.sub .z.next{background:#12202e;border-left:3px solid var(--acc);border-radius:6px;padding-left:6px;margin-left:-9px}
+/* "naechste", NICHT "next": .next ist die feste Knopfleiste unten (position:fixed) - mit gleichem
+   Namen rutschte die naechste offene Menge hinter die Leiste (Nutzerbefund 2026-10-10: K1 zeigte nur Fine) */
+.sub .z.naechste{background:#12202e;border-left:3px solid var(--acc);border-radius:6px;padding-left:6px;margin-left:-9px}
 .sub .z.done{opacity:.55}
 .sub .z.done .bx{background:var(--ok);border-color:var(--ok);color:#08131a}
 .sub .z.done .zt{text-decoration:line-through}
@@ -349,7 +351,7 @@ function unterliste(i){var it=STEPS[i],u=it.u;if(!u||!u.length)return '';
   var h='<div class="sub">',gz='',nx=subNext(i);
   for(var j=0;j<u.length;j++){var r=u[j],s=st(r.id);
     if(r.g&&r.g!==gz){h+='<div class="ut">'+esc(r.g)+'</div>';gz=r.g;}
-    h+='<div class="z'+(s===1?' done':'')+(j===nx?' next':'')+'" onclick="subSetzen('+i+','+j+')">'+
+    h+='<div class="z'+(s===1?' done':'')+(j===nx?' naechste':'')+'" onclick="subSetzen('+i+','+j+')">'+
        '<span class="bx">'+(s===1?'&#10003;':'')+'</span><span class="m">'+esc(r.m)+
        '</span><span class="zt">'+esc(r.t)+'</span></div>';}
   return h+'</div><div class="subhint">Gr&uuml;ner Knopf = n&auml;chste Menge der Reihe nach abhaken (oder einzeln antippen) &ndash; sind alle erledigt, ist der Punkt fertig.</div>';}
