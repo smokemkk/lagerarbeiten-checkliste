@@ -18,18 +18,22 @@ body{padding-bottom:132px}
 header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px solid var(--line);
   padding:8px 10px 6px}
 .tourrow{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-.tour{font-size:15px;font-weight:700;color:var(--acc)}
-.agebadge{display:inline-block;margin-left:7px;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:800;
+.tourrow>span{white-space:nowrap}
+.tourrow>span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.tour{font-size:14px;font-weight:700;color:var(--acc)}
+.agebadge{display:inline-block;margin-left:6px;padding:2px 6px;border-radius:8px;font-size:11px;font-weight:800;
   letter-spacing:.6px;vertical-align:middle;background:#12331f;color:var(--ok);border:1px solid var(--ok)}
 .agebadge.fertig{background:#12304a;color:var(--acc);border-color:var(--acc)}
-.felder{display:flex;gap:6px;margin:7px 0 4px;flex-wrap:wrap}
-.felder input{flex:1 1 110px;min-width:0;background:var(--card);color:var(--fg);border:1px solid var(--line);
-  border-radius:9px;padding:8px 10px;font-size:14px;font-family:inherit}
+/* Felder in EINER Zeile (vorher zwei): KW schmal, Datum fest, Bearbeiter nimmt den Rest */
+.felder{display:flex;gap:6px;margin:5px 0 3px}
+.felder input{flex:1 1 0;min-width:0;background:var(--card);color:var(--fg);border:1px solid var(--line);
+  border-radius:9px;padding:5px 8px;font-size:14px;font-family:inherit}
+#f_kw{flex:0 0 50px;text-align:center} #f_datum{flex:0 0 138px}
 .felder input::placeholder{color:#5f7183}
 .prog{font-size:13px;color:var(--dim)}
 .prog b{color:var(--ok)} .prog i{color:var(--warn);font-style:normal}
-.navtabs{display:flex;gap:6px;padding:7px 0 4px}
-.navtab{flex:1;text-align:center;padding:9px 4px;border-radius:12px;background:var(--card);color:var(--dim);
+.navtabs{display:flex;gap:6px;padding:5px 0 4px}
+.navtab{flex:1;text-align:center;padding:7px 4px;border-radius:12px;background:var(--card);color:var(--dim);
   font-size:13px;font-weight:700;border:1px solid var(--line);white-space:nowrap}
 .navtab.act{background:var(--acc);color:#04283d;border-color:var(--acc)}
 .navtab.pkt{color:#ffd54a;border-color:#ffd54a;font-size:15px;font-weight:800}
@@ -47,20 +51,21 @@ header{position:sticky;top:0;z-index:20;background:var(--bg);border-bottom:1px s
   padding:9px 12px;font-size:15px;font-weight:700;text-align:center}
 #hinweis.on{display:block}
 /* Schritt-Karte (bleibt unter dem Kopf stehen; die Ablauf-Liste laeuft darunter mit) */
-.stepcard{margin:10px;padding:14px;background:var(--card);border:2px solid var(--acc);border-radius:16px}
+/* bewusst kompakt: die Karte steht fest ueber der Liste und soll Unterzeilen und Ablauf Platz lassen */
+.stepcard{margin:6px 10px;padding:8px 12px;background:var(--card);border:2px solid var(--acc);border-radius:14px}
 .stepcard.fest{position:sticky;top:var(--kopf,0px);z-index:4;box-shadow:0 -11px 0 0 var(--bg),0 6px 10px -4px #000a}
-.stepcard .shead{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
-.kbadge{flex:0 0 auto;background:var(--acc);color:#04283d;font-size:14px;font-weight:800;padding:4px 10px;border-radius:9px}
-.stepcard .stitle{font-size:19px;font-weight:800;line-height:1.25}
-.stepcard .ssub{width:100%;font-size:13px;color:var(--dim);margin-top:3px;line-height:1.3;text-transform:uppercase;letter-spacing:.5px}
-.tmrrow{display:flex;align-items:baseline;gap:14px;margin-top:10px}
-.tmr{font-size:50px;font-weight:800;line-height:1;color:var(--ok)}
+.stepcard .shead{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.kbadge{flex:0 0 auto;background:var(--acc);color:#04283d;font-size:12px;font-weight:800;padding:3px 8px;border-radius:8px}
+.stepcard .stitle{flex:1;min-width:0;font-size:16px;font-weight:800;line-height:1.2}
+.stepcard .ssub{width:100%;font-size:11px;color:var(--dim);margin-top:1px;line-height:1.25;text-transform:uppercase;letter-spacing:.5px}
+.tmrrow{display:flex;align-items:center;gap:12px;margin-top:4px}
+.tmr{font-size:30px;font-weight:800;line-height:1;color:var(--ok)}
 .tmr.pause{color:var(--warn)}
-.soll{margin-left:auto;text-align:right;font-size:13px;color:var(--dim);line-height:1.4}
-.soll b{color:var(--fg);font-size:16px}
-.pausenote{margin-top:8px;padding:8px 10px;border-radius:10px;background:#3a2f14;color:var(--warn);font-weight:800;
-  font-size:14px;text-align:center}
-.sub{background:#141b23;border:1px solid var(--line);border-radius:12px;padding:6px 12px;margin:12px 0 0}
+.soll{margin-left:auto;text-align:right;font-size:12px;color:var(--dim);line-height:1.25}
+.soll b{color:var(--fg);font-size:14px}
+.pausenote{margin-top:5px;padding:5px 10px;border-radius:9px;background:#3a2f14;color:var(--warn);font-weight:800;
+  font-size:13px;text-align:center}
+.sub{background:#141b23;border:1px solid var(--line);border-radius:12px;padding:4px 12px;margin:7px 0 0}
 .sub .ut{font-size:11px;font-weight:700;letter-spacing:.6px;color:var(--acc);padding:6px 0 3px;text-transform:uppercase}
 .sub .z{display:flex;align-items:center;gap:10px;font-size:14px;line-height:1.3;padding:8px 0;
   border-bottom:1px solid #1f2a35;cursor:pointer}
@@ -104,15 +109,32 @@ h3{margin:16px 12px 2px;font-size:13px;color:var(--dim);letter-spacing:1px;text-
   border-radius:12px;padding:12px;font-size:14.5px;font-family:inherit;line-height:1.4;resize:vertical}
 .hint{margin:8px 12px 16px;font-size:12.5px;color:var(--dim);line-height:1.45}
 .next{position:fixed;left:0;right:0;bottom:0;z-index:6;background:linear-gradient(#141a21f2,#141a21);border-top:1px solid var(--line);
-  padding:7px 10px 10px;display:flex;gap:8px;align-items:stretch}
+  padding:7px 10px 10px;display:flex;gap:6px;align-items:stretch}
 .stepback{flex:0 0 auto;align-self:center;padding:13px 12px;font-size:15px;font-weight:800;border-radius:12px;
   border:1.5px solid var(--dim);background:var(--card);color:var(--fg);font-family:inherit}
 .stepback:disabled{opacity:.35}
 .stepback.pause.on{border-color:var(--warn);color:var(--warn);background:#3a2f14}
-.skipbtn{flex:0 0 auto;padding:13px 10px;font-size:14px;font-weight:800;border-radius:12px;background:var(--card);
+/* Knoepfe der Fussleiste mit Beschriftung: Symbol oben, Wort darunter */
+.ic{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:46px;padding:6px 4px;line-height:1}
+.ic span{font-size:19px;line-height:1}
+.ic small{font-size:10px;font-weight:700;letter-spacing:.2px;color:var(--dim);white-space:nowrap}
+.stepback.pause.on small{color:var(--warn)}
+.skipbtn.ic{padding:6px 3px;color:var(--fg);border-color:var(--dim)}
+.skipbtn{flex:0 0 auto;padding:6px 10px;font-size:14px;font-weight:800;border-radius:12px;background:var(--card);
   color:var(--warn);border:1.5px solid var(--warn);font-family:inherit}
-.fertigbtn{flex:1;padding:15px 8px;font-size:18px;font-weight:800;border:0;border-radius:12px;background:var(--ok);
-  color:#03210f;font-family:inherit}
+.fertigbtn{flex:1;min-width:0;padding:6px 4px;font-size:15px;line-height:1.15;font-weight:800;border:0;border-radius:12px;
+  background:var(--ok);color:#03210f;font-family:inherit}
+/* Mengen-Knopf: Zaehler gross, Bezeichnung einzeilig darunter (sonst wuchs die Leiste auf 5 Zeilen) */
+.fertigbtn span{white-space:nowrap}
+/* sehr schmale Displays: Knoepfe enger, Datumsfeld schmaler, gruener Knopf behaelt eine Mindestbreite */
+@media(max-width:339px){.next{gap:4px;padding-left:6px;padding-right:6px}.ic{min-width:38px;padding:6px 2px}
+  .ic small{font-size:9px;letter-spacing:0}.skipbtn.ic{padding:6px 2px}.fertigbtn{font-size:14px;padding:6px 2px}
+  #f_kw{flex-basis:40px}#f_datum{flex-basis:118px}.felder input{padding:5px 5px;font-size:13px}
+  .tour{font-size:13px}.agebadge{margin-left:4px;padding:2px 4px;font-size:10px;letter-spacing:0}}
+/* unter 300 px ist fuer die Woerter kein Platz: nur Symbole */
+@media(max-width:299px){.ic small{display:none}.ic{min-width:34px}}
+.fertigbtn.mg{font-size:14px}
+.fertigbtn.mg small{display:block;margin-top:2px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nx{flex:1;min-width:0;display:flex;align-items:center}
 .nx .lbl{font-size:11px;letter-spacing:1.5px;color:var(--dim);font-weight:700}
 #pktpop{position:fixed;right:10px;bottom:92px;z-index:50;pointer-events:none;text-align:center;padding:8px 14px;
@@ -151,7 +173,7 @@ h3{margin:16px 12px 2px;font-size:13px;color:var(--dim);letter-spacing:1px;text-
   <div class="tourrow"><span><span class="tour" id="titel">Checkliste</span><span class="agebadge" id="wchip">&nbsp;</span></span>
     <span class="prog" id="zeitges"></span></div>
   <div class="felder">
-    <input id="f_kw" inputmode="numeric" placeholder="Kalenderwoche">
+    <input id="f_kw" inputmode="numeric" placeholder="KW" aria-label="Kalenderwoche">
     <input id="f_datum" type="date">
     <input id="f_bearb" placeholder="Bearbeiter">
   </div>
@@ -321,11 +343,11 @@ function fertig(){if(subOffen(state.step)>0)return;setzen(STEPS[state.step].nr,1
 function subNext(i){var u=STEPS[i].u;if(!u)return -1;for(var j=0;j<u.length;j++){if(st(u[j].id)!==1)return j;}return -1;}
 function subWeiter(){var j=subNext(state.step);if(j<0){fertig();return;}subSetzen(state.step,j);}
 function nz(){var s=STEPS[state.step];
-  if(s.u&&s.u.length&&!confirm('Diesen Punkt mit allen '+s.u.length+' Mengen als \u201en. z.\u201c (nicht zutreffend) kennzeichnen?'))return;
+  if(s.u&&s.u.length&&!confirm('Diesen Punkt mit allen '+s.u.length+' Mengen \u00fcberspringen (nicht zutreffend)?'))return;
   setzen(s.nr,2);}
 /* Antippen in der Ablauf-Liste: offene Punkte werden direkt aktiv; erledigte oder n. z.
    erst nach Bestaetigung wieder geoeffnet (Codex-Befund P2.4). */
-function springe(i){if(st(STEPS[i].nr)!==0&&!confirm(STEPS[i].nr+' ist bereits '+(st(STEPS[i].nr)===1?'erledigt':'n. z.')+'. Wieder \u00f6ffnen und Timer starten?'))return;laufe(i);}
+function springe(i){if(st(STEPS[i].nr)!==0&&!confirm(STEPS[i].nr+' ist bereits '+(st(STEPS[i].nr)===1?'erledigt':'\u00fcbersprungen')+'. Wieder \u00f6ffnen und Timer starten?'))return;laufe(i);}
 function stepZurueck(){if(state.step>0)laufe(state.step-1);}
 function undo(){if(!state)return;var h=state.hist.pop();if(!h)return;
   if(h.multi){for(var k=h.multi.length-1;k>=0;k--)state.items[h.multi[k].nr]=h.multi[k].prev;}
@@ -369,7 +391,7 @@ function punkte(){
   var fertigAlle=komplett();
   var geteilt=!!state.meld.liste&&state.meld.liste===listeSig();
   var rows=[
-    {t:'Erledigte Punkte',sub:done+' von '+STEPS.length+' (n. z. z\u00e4hlt nicht)',p:done*PKT.schritt,max:STEPS.length*PKT.schritt},
+    {t:'Erledigte Punkte',sub:done+' von '+STEPS.length+' (\u00dcbersprungene z\u00e4hlen nicht)',p:done*PKT.schritt,max:STEPS.length*PKT.schritt},
     {t:'Ready-Mengen vollst\u00e4ndig',sub:readyOk+' von '+mitU+' Mengen-Bl\u00f6cken',p:readyOk*PKT.ready,max:mitU*PKT.ready},
     {t:'Durchlauf komplett',sub:fertigAlle?'geschafft':'noch offen',p:fertigAlle?PKT.durchlauf:0,max:PKT.durchlauf},
     {t:'Checkliste geteilt',sub:geteilt?'gesendet':(state.meld.liste?'Stand ge\u00e4ndert \u2013 erneut senden':'noch senden'),p:geteilt?PKT.meld:0,max:PKT.meld}];
@@ -415,7 +437,7 @@ function ablaufListe(h){
     var ms=zeitMs(s.nr),sv=st(s.nr);
     var cls='srow'+(i===state.step?' cur':'')+(sv===1?' ok':'')+(sv===2?' sk':'');
     h+='<div class="'+cls+'" onclick="springe('+i+')"><span class="snr">'+esc(s.nr)+'</span><span class="snm">'+esc(s.t)+
-       (s.g?'<small>'+esc(s.g)+'</small>':'')+'</span><span class="szeit">'+(ms>=1000?fmt(ms):(sv===2?'n. z.':''))+'</span></div>';}
+       (s.g?'<small>'+esc(s.g)+'</small>':'')+'</span><span class="szeit">'+(ms>=1000?fmt(ms):(sv===2?'\u00fcbersprungen':''))+'</span></div>';}
   h+='</div><button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
   return h;}
 function zeitUebersicht(){
@@ -425,7 +447,7 @@ function zeitUebersicht(){
   for(var i=0;i<STEPS.length;i++){var s=STEPS[i];
     if(s.blk!==grp){if(grp!==null)h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">'+esc(grp)+'</span><span class="z3">'+fmtM(bs)+'</span></div>';grp=s.blk;bs=0;}
     var ms=zeitMs(s.nr);bs+=ms;
-    h+='<div class="srow"><span class="snr">'+esc(s.nr)+'</span><span class="snm">'+esc(s.t)+(st(s.nr)===2?'<small>n. z.</small>':'')+
+    h+='<div class="srow"><span class="snr">'+esc(s.nr)+'</span><span class="snm">'+esc(s.t)+(st(s.nr)===2?'<small>\u00fcbersprungen</small>':'')+
        '</span><span class="z3'+(ms>0?' istok':'')+'">'+fmtM(ms)+'</span></div>';}
   h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">'+esc(grp)+'</span><span class="z3">'+fmtM(bs)+'</span></div>';
   h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">GESAMT</span><span class="z3">'+fmtM(gesamtMs())+'</span></div>';
@@ -449,7 +471,7 @@ function render(){
   var off=STEPS.length-done-nzn,fertigN=done+nzn;
   var pt=punkte(),pktPlus=(pktAlt!==null&&pt.sum>pktAlt)?pt.sum-pktAlt:0;pktAlt=pt.sum;
   if(pktPlus)pktPop(pktPlus,pt.sum);
-  document.getElementById('stand').innerHTML='<b>'+done+'</b> \u2713 \u00b7 <i>'+nzn+'</i> n. z. \u00b7 '+off+' offen';
+  document.getElementById('stand').innerHTML='<b>'+done+'</b> \u2713 \u00b7 <i>'+nzn+'</i> \u00fcbersprungen \u00b7 '+off+' offen';
   document.getElementById('zeitges').innerHTML=(state.pausiert?'\u23f8 ':'\u23f1 ')+'<b id="gz">'+fmtM(gesamtMs())+'</b> min';
   var p=STEPS.length?Math.round(fertigN*100/STEPS.length):0;
   document.getElementById('proz').textContent=p+' %';
@@ -472,7 +494,7 @@ function render(){
     h+='<div class="alldone">\u2705 Alle Punkte abgearbeitet<div class="pktmax">\u23f1 '+fmtM(gesamtMs())+' min \u00b7 Bemerkungen erg\u00e4nzen, dann teilen</div></div>';
     h+='<button class="report" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
     h=ablaufListe(h);main.innerHTML=h;
-    bot.innerHTML='<button class="stepback" onclick="stepZurueck()">\u2039 Punkt</button><button class="stepback" onclick="undo()" '+(state.hist.length?'':'disabled')+'>\u21a9</button><div class="nx"><div class="lbl">DURCHLAUF FERTIG \ud83c\udf89</div></div>';
+    bot.innerHTML='<button class="stepback" onclick="stepZurueck()">\u2039 Punkt</button><button class="stepback ic" onclick="undo()" '+(state.hist.length?'':'disabled')+'><span>\u21a9</span><small>R\u00fcckg\u00e4ngig</small></button><div class="nx"><div class="lbl">DURCHLAUF FERTIG \ud83c\udf89</div></div>';
     save();scrollNach(y0);return;}
   if(naechsterOffen(0)<0){
     /* kein offener Punkt, aber ein erledigter Punkt mit offenen Mengen: dorthin */
@@ -483,13 +505,14 @@ function render(){
   h+='<div class="stepcard fest"><div class="shead"><span class="kbadge">'+esc(s.nr)+'</span><span class="stitle">'+esc(s.t)+'</span>'+
      '<span class="ssub">'+esc(s.blk)+(s.g?' \u00b7 '+esc(s.g):'')+'</span></div>'+timerStreifen(s)+unterliste(state.step)+'</div>';
   h=ablaufListe(h);main.innerHTML=h;
-  var pBtn='<button class="stepback pause'+(state.pausiert?' on':'')+'" onclick="togglePause()">'+(state.pausiert?'\u25b6':'\u23f8')+'</button>';
-  bot.innerHTML='<button class="stepback" onclick="stepZurueck()" '+(state.step?'':'disabled')+'>\u2039</button>'+pBtn+
-    '<button class="stepback" onclick="undo()" '+(state.hist.length?'':'disabled')+'>\u21a9</button>'+
-    '<button class="skipbtn" onclick="nz()">n. z.</button>'+
+  var pBtn='<button class="stepback pause ic'+(state.pausiert?' on':'')+'" onclick="togglePause()"><span>'+(state.pausiert?'\u25b6':'\u23f8')+'</span><small>'+(state.pausiert?'Weiter':'Pause')+'</small></button>';
+  bot.innerHTML='<button class="stepback ic" onclick="stepZurueck()" '+(state.step?'':'disabled')+'><span>\u2039</span><small>Zur\u00fcck</small></button>'+pBtn+
+    '<button class="stepback ic" onclick="undo()" '+(state.hist.length?'':'disabled')+'><span>\u21a9</span><small>R\u00fcckg\u00e4ngig</small></button>'+
+    /* nur die Beschriftung des Knopfs; der Status des Punkts bleibt "n. z." (nicht zutreffend) */
+    '<button class="skipbtn ic" onclick="nz()"><span>\u21b7</span><small>\u00dcberspringen</small></button>'+
     (subOffen(state.step)>0?(function(){var u=s.u,j=subNext(state.step),r=u[j];
-        return '<button class="fertigbtn" onclick="subWeiter()">\u2713 Menge '+(u.length-subOffen(state.step)+1)+'/'+u.length+': '+esc(r.m)+' '+esc(r.t)+'</button>';})()
-      :'<button class="fertigbtn" onclick="fertig()">\u2713 Fertig \u2013 weiter</button>');
+        return '<button class="fertigbtn mg" onclick="subWeiter()">\u2713 Menge '+(u.length-subOffen(state.step)+1)+'/'+u.length+': <small>'+esc(r.m)+' '+esc(r.t)+'</small></button>';})()
+      :'<button class="fertigbtn" onclick="fertig()"><span>\u2713 Fertig</span> <span>\u2013 weiter</span></button>');
   save();scrollNach(y0);}
 
 /* Sekunden-Tick: nur Timer-Anzeigen aktualisieren (kein Voll-Render), alle 10 s speichern. */
