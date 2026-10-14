@@ -582,8 +582,11 @@ function bericht(){
    'kopiert' = nur in die Zwischenablage (gilt NICHT als Versandnachweis, Codex-Befund P1.2);
    false = abgebrochen/nicht moeglich. alt = true: Teilen-Menue statt E-Mail. */
 function teileText(titel,txt,alt){
-  if(MAIL&&!alt){window.location.href='mailto:'+MAIL+'?subject='+encodeURIComponent(titel)+
-      '&body='+encodeURIComponent(txt.replace(/\r?\n/g,'\r\n'));return Promise.resolve('geteilt');}
+  if(MAIL&&!alt){var url='mailto:'+MAIL+'?subject='+encodeURIComponent(titel)+
+      '&body='+encodeURIComponent(txt.replace(/\r?\n/g,'\r\n'));
+    /* Sehr lange mailto-Links kuerzen manche Mail-Apps still -> dann lieber das Teilen-Menue */
+    if(url.length<=16000){window.location.href=url;return Promise.resolve('geteilt');}
+    alert('Bericht zu lang f\u00fcr den E-Mail-Knopf \u2013 bitte \u00fcber Teilen an '+MAIL+' senden.');}
   if(navigator.share){return navigator.share({title:titel,text:txt}).then(function(){return 'geteilt';},function(e){
     if(e&&e.name==='AbortError')return false;return kopiere(txt);});}
   return kopiere(txt);}
