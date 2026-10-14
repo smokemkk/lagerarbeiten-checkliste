@@ -110,6 +110,8 @@ h3{margin:16px 12px 2px;font-size:13px;color:var(--dim);letter-spacing:1px;text-
 .sendinfo{margin:10px 12px;padding:12px 13px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:14px;line-height:1.4}
 .sendst{margin:-6px 14px 14px;font-size:13px;color:var(--dim);display:flex;justify-content:space-between;gap:10px;align-items:center}
 .sendst .ok{color:var(--ok);font-weight:700}
+.sendinfo.frage{border:2px solid var(--ok);font-size:15px;font-weight:700}
+.fragebtn{display:flex;gap:8px}.fragebtn .report{margin:10px 0 0;flex:1;width:auto;padding:12px;font-size:15px}
 .altlink{background:none;border:0;padding:4px 0;color:var(--acc);font-size:13px;text-decoration:underline;font-family:inherit}
 .bem{width:calc(100% - 24px);margin:4px 12px 0;min-height:110px;background:var(--card);color:var(--fg);border:1px solid var(--line);
   border-radius:12px;padding:12px;font-size:14.5px;font-family:inherit;line-height:1.4;resize:vertical}
@@ -255,7 +257,7 @@ var KATALOG=[], STEPS=[], state=null, MAIL='';
 var PKT={schritt:2,ready:10,durchlauf:50,meld:25};
 
 function leer(){return {items:{},hist:[],zeit:{},aktiv:null,seit:null,pausiert:0,pauseSeit:null,pauseSum:0,
-  step:0,view:0,meld:{},ts:0,kw:String(W.kw),datum:isoDatum(HEUTE),bearb:'',bem:'',woche:KEY};}
+  step:0,view:0,meld:{},mailOffen:null,ts:0,kw:String(W.kw),datum:isoDatum(HEUTE),bearb:'',bem:'',woche:KEY};}
 function laden(){var r=null;try{r=JSON.parse(LS.getItem(KEY)||'null');}catch(e){}
   if(!r||!r.items)return leer();
   var l=leer();for(var k in l){if(r[k]===undefined||r[k]===null){if(k!=='aktiv'&&k!=='seit'&&k!=='pauseSeit')r[k]=l[k];}}
@@ -468,7 +470,9 @@ function zeitUebersicht(){
 function sendenAnsicht(){
   var off=0,offM=0;for(var i=0;i<STEPS.length;i++){if(st(STEPS[i].nr)===0)off++;offM+=subOffen(i);}
   var geteilt=!!state.meld.liste&&state.meld.liste===listeSig();
-  var h='<h3>Liste senden</h3><div class="sendinfo">'+(MAIL?'\u201eSenden\u201c \u00f6ffnet dein E-Mail-Programm \u2013 Empf\u00e4nger '+esc(MAIL)+', Betreff und Text sind schon eingetragen, dort nur noch auf Senden tippen.'
+  var h='<h3>Liste senden</h3>'+(state.mailOffen?'<div class="sendinfo frage">\u2709 Hast du die E-Mail abgeschickt?'+
+    '<div class="fragebtn"><button class="report" onclick="mailBestaetigt(true)">\u2713 Ja, abgeschickt</button><button class="report z" onclick="mailBestaetigt(false)">Nein</button></div></div>':'')+
+    '<div class="sendinfo">'+(MAIL?'\u201eSenden\u201c \u00f6ffnet dein E-Mail-Programm \u2013 Empf\u00e4nger '+esc(MAIL)+', Betreff und Text sind schon eingetragen, dort nur noch auf Senden tippen.'
       :'\u201eSenden\u201c \u00f6ffnet das Teilen-Men\u00fc \u2013 die Liste bitte wie besprochen senden.')+
     '<br><br>Senden geht <b>jederzeit</b> \u2013 auch wenn noch nicht alles abgehakt ist.'+
     (off||offM?' Gerade offen: <b>'+off+' Punkt'+(off===1?'':'e')+'</b>'+(offM?' und <b>'+offM+' Menge'+(offM===1?'':'n')+'</b>':'')+' \u2013 steht im Bericht als \u201eoffen\u201c.':'')+
@@ -578,14 +582,15 @@ function bericht(){
   z.push('Punkte: '+punkte().sum+' / '+punkte().max+(komplett()?'   (Durchlauf komplett)':'   (Durchlauf NICHT komplett'+(offenM?', '+offenM+' Mengen offen':'')+')'));
   z.push('');z.push('Bemerkungen / offene Punkte:');z.push(state.bem?state.bem:'\u2013');
   return z.join('\n');}
-/* Rueckgabe 'geteilt' = Mail-Programm mit Empfaenger geoeffnet bzw. ueber das Teilen-Menue versendet;
-   'kopiert' = nur in die Zwischenablage (gilt NICHT als Versandnachweis, Codex-Befund P1.2);
+/* Rueckgabe 'mail' = Mail-Programm mit Empfaenger geoeffnet (Versand nicht erkennbar -> Rueckfrage
+   "Abgeschickt?", erst "Ja" zaehlt; Nutzerentscheidung 2026-10-14); 'geteilt' = ueber das Teilen-Menue
+   versendet; 'kopiert' = nur in die Zwischenablage (gilt NICHT als Versandnachweis, Codex-Befund P1.2);
    false = abgebrochen/nicht moeglich. alt = true: Teilen-Menue statt E-Mail. */
 function teileText(titel,txt,alt){
   if(MAIL&&!alt){var url='mailto:'+MAIL+'?subject='+encodeURIComponent(titel)+
       '&body='+encodeURIComponent(txt.replace(/\r?\n/g,'\r\n'));
     /* Sehr lange mailto-Links kuerzen manche Mail-Apps still -> dann lieber das Teilen-Menue */
-    if(url.length<=16000){window.location.href=url;return Promise.resolve('geteilt');}
+    if(url.length<=16000){window.location.href=url;return Promise.resolve('mail');}
     alert('Bericht zu lang f\u00fcr den E-Mail-Knopf \u2013 bitte \u00fcber Teilen an '+MAIL+' senden.');}
   if(navigator.share){return navigator.share({title:titel,text:txt}).then(function(){return 'geteilt';},function(e){
     if(e&&e.name==='AbortError')return false;return kopiere(txt);});}
@@ -596,7 +601,9 @@ function kopiere(txt){
   alert(txt);return Promise.resolve('kopiert');}
 function teilen(alt){var sig=listeSig();
   teileText(document.getElementById('titel').textContent+' \u2013 KW '+(state.kw||W.kw)+' / '+W.jahr,bericht(),alt).then(function(r){
-    if(r==='geteilt'){state.meld.liste=sig;save();render();}});}
+    if(r==='geteilt'){state.meld.liste=sig;state.mailOffen=null;save();render();}
+    else if(r==='mail'){state.mailOffen=sig;state.view=4;springTop=true;save();render();}});}
+function mailBestaetigt(ja){var o=state.mailOffen;state.mailOffen=null;if(ja&&o)state.meld.liste=o;save();render();}
 
 /* Start, sobald der Katalog da ist (lokal sofort, im Repo nach der Entschluesselung) */
 function startApp(d){
