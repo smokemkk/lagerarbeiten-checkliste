@@ -105,6 +105,12 @@ h3{margin:16px 12px 2px;font-size:13px;color:var(--dim);letter-spacing:1px;text-
   border-radius:12px;background:var(--warn);color:#3a2a00;font-family:inherit}
 .report.z{background:#12304a;color:var(--acc);border:1.5px solid var(--acc)}
 .report.r{background:var(--card);color:var(--dim);border:1.5px solid var(--line);font-size:14px}
+.navtab.send{color:var(--ok);border-color:var(--ok)}
+.navtab.send.act{background:var(--ok);color:#03210f}
+.sendinfo{margin:10px 12px;padding:12px 13px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:14px;line-height:1.4}
+.sendst{margin:-6px 14px 14px;font-size:13px;color:var(--dim);display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sendst .ok{color:var(--ok);font-weight:700}
+.altlink{background:none;border:0;padding:4px 0;color:var(--acc);font-size:13px;text-decoration:underline;font-family:inherit}
 .bem{width:calc(100% - 24px);margin:4px 12px 0;min-height:110px;background:var(--card);color:var(--fg);border:1px solid var(--line);
   border-radius:12px;padding:12px;font-size:14.5px;font-family:inherit;line-height:1.4;resize:vertical}
 .hint{margin:8px 12px 16px;font-size:12.5px;color:var(--dim);line-height:1.45}
@@ -190,7 +196,7 @@ h3{margin:16px 12px 2px;font-size:13px;color:var(--dim);letter-spacing:1px;text-
   <textarea class="bem" id="bem" placeholder="Was ist offen geblieben? Auff&auml;lligkeiten?"></textarea>
   <div class="hint">Haken, Zeiten, Felder und Bemerkungen liegen <b>nur auf diesem Ger&auml;t</b>
     (Browserspeicher, ein Eintrag je Kalenderwoche). Es gibt keinen R&uuml;ckkanal &ndash;
-    zum Abschluss die Liste &uuml;ber &bdquo;Teilen&ldquo; versenden &ndash; das ist der Nachweis f&uuml;r den Durchlauf.
+    zum Abschluss die Liste &uuml;ber &bdquo;&#128228; Senden&ldquo; verschicken &ndash; das ist der Nachweis f&uuml;r den Durchlauf.
     Der Timer l&auml;uft von selbst: beim &Ouml;ffnen eines Punkts startet er, beim Abhaken stoppt er und der
     n&auml;chste Punkt beginnt. F&uuml;r echte Pausen &#9208; dr&uuml;cken.</div>
 </section>
@@ -242,7 +248,7 @@ function isoDatum(d){var m=String(d.getMonth()+1),t=String(d.getDate());
 var HEUTE=new Date(), W=isoWoche(HEUTE);
 var KEY='lagerarbeiten_'+W.jahr+'-KW'+(W.kw<10?'0'+W.kw:W.kw);
 
-var KATALOG=[], STEPS=[], state=null;
+var KATALOG=[], STEPS=[], state=null, MAIL='';
 /* Punkte-Wertung (Selbstkontrolle; reine Anzeige auf dem Geraet). Ohne Sollzeiten gibt es
    keine Zeitpunkte: je erledigtem Punkt, je vollstaendigem Mengen-Block, Durchlauf komplett,
    Liste geteilt. n. z. zaehlt nicht. */
@@ -254,6 +260,7 @@ function laden(){var r=null;try{r=JSON.parse(LS.getItem(KEY)||'null');}catch(e){
   if(!r||!r.items)return leer();
   var l=leer();for(var k in l){if(r[k]===undefined||r[k]===null){if(k!=='aktiv'&&k!=='seit'&&k!=='pauseSeit')r[k]=l[k];}}
   if(!r.zeit)r.zeit={};if(!r.meld||typeof r.meld!=='object')r.meld={};
+  if(typeof r.view!=='number'||r.view<0||r.view>4)r.view=0;
   /* Migration des Stands vor 2026-10-05: lauf {nr,start} -> aktiv/seit */
   if(r.lauf&&r.lauf.nr){r.aktiv=r.lauf.nr;r.seit=r.lauf.start;}
   delete r.lauf;
@@ -438,7 +445,7 @@ function ablaufListe(h){
     var cls='srow'+(i===state.step?' cur':'')+(sv===1?' ok':'')+(sv===2?' sk':'');
     h+='<div class="'+cls+'" onclick="springe('+i+')"><span class="snr">'+esc(s.nr)+'</span><span class="snm">'+esc(s.t)+
        (s.g?'<small>'+esc(s.g)+'</small>':'')+'</span><span class="szeit">'+(ms>=1000?fmt(ms):(sv===2?'\u00fcbersprungen':''))+'</span></div>';}
-  h+='</div><button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
+  h+='</div><button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste senden (Bericht)</button>';
   return h;}
 function zeitUebersicht(){
   var h='<h3>Zeit-\u00dcbersicht</h3><div class="steps">';
@@ -453,8 +460,22 @@ function zeitUebersicht(){
   h+='<div class="srow summe"><span class="snr">\u03a3</span><span class="snm">GESAMT</span><span class="z3">'+fmtM(gesamtMs())+'</span></div>';
   h+='<div class="srow"><span class="snr">\u23f8</span><span class="snm">Pausen<small>laufen separat, z\u00e4hlen nicht ins Ist</small></span><span class="z3">'+fmtM(pauseMs())+'</span></div>';
   h+='</div><div class="hint">Keine Sollzeiten hinterlegt \u2013 die Zeiten dienen der Selbstkontrolle und stehen im Teilen-Bericht.</div>';
-  h+='<button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
+  h+='<button class="report z" onclick="teilen()">\ud83d\udce4 Checkliste senden (Bericht)</button>';
   h+='<button class="report r" onclick="reset()">Reset \u2013 diese Woche zur\u00fccksetzen</button>';
+  return h;}
+/* Senden-Ansicht (view 4): Bericht an fester, gut sichtbarer Stelle. Senden geht jederzeit -
+   auch mit offenen Punkten (stehen im Bericht als "(offen)"). */
+function sendenAnsicht(){
+  var off=0,offM=0;for(var i=0;i<STEPS.length;i++){if(st(STEPS[i].nr)===0)off++;offM+=subOffen(i);}
+  var geteilt=!!state.meld.liste&&state.meld.liste===listeSig();
+  var h='<h3>Liste senden</h3><div class="sendinfo">'+(MAIL?'\u201eSenden\u201c \u00f6ffnet dein E-Mail-Programm \u2013 Empf\u00e4nger '+esc(MAIL)+', Betreff und Text sind schon eingetragen, dort nur noch auf Senden tippen.'
+      :'\u201eSenden\u201c \u00f6ffnet das Teilen-Men\u00fc \u2013 die Liste bitte wie besprochen senden.')+
+    '<br><br>Senden geht <b>jederzeit</b> \u2013 auch wenn noch nicht alles abgehakt ist.'+
+    (off||offM?' Gerade offen: <b>'+off+' Punkt'+(off===1?'':'e')+'</b>'+(offM?' und <b>'+offM+' Menge'+(offM===1?'':'n')+'</b>':'')+' \u2013 steht im Bericht als \u201eoffen\u201c.':'')+
+    ' Bemerkungen unten kommen mit in den Bericht.</div>';
+  h+='<button class="report" onclick="teilen()">\ud83d\udce4 Checkliste senden (Bericht)</button>';
+  h+='<div class="sendst"><span>'+(geteilt?'<span class="ok">\u2713 gesendet</span>':(state.meld.liste?'ge\u00e4ndert \u2013 bitte erneut senden':'noch nicht gesendet'))+'</span>'+
+    (MAIL?'<button class="altlink" onclick="teilen(true)">andere App \u2026</button>':'')+'</div>';
   return h;}
 function punkteAnsicht(){var pt=punkte();
   var h='<div class="alldone">\u2605 '+pt.sum+' Punkte<div class="pktmax">von '+pt.max+' m\u00f6glichen</div></div><div class="steps">';
@@ -480,19 +501,23 @@ function render(){
   document.getElementById('navzone').innerHTML=
     '<div class="navtabs"><div class="navtab'+(state.view===0?' act':'')+'" onclick="zeigeView(0)">Ablauf</div>'+
     '<div class="navtab'+(state.view===2?' act':'')+'" onclick="zeigeView(2)">\u23f1 Zeit</div>'+
-    '<div class="navtab pkt'+(state.view===3?' act':'')+(pktPlus?' neu':'')+'" onclick="zeigeView(3)">\u2605 '+pt.sum+'</div></div>';
+    '<div class="navtab pkt'+(state.view===3?' act':'')+(pktPlus?' neu':'')+'" onclick="zeigeView(3)">\u2605 '+pt.sum+'</div>'+
+    '<div class="navtab send'+(state.view===4?' act':'')+'" onclick="zeigeView(4)">\ud83d\udce4 Senden</div></div>';
   var main=document.getElementById('main'),bot=document.getElementById('botbar'),bem=document.getElementById('bemsec');
-  bem.style.display=(state.view===0)?'':'none';
+  bem.style.display=(state.view===0||state.view===4)?'':'none';
   if(state.view===2){main.innerHTML=zeitUebersicht();
     bot.innerHTML='<button class="stepback" onclick="zeigeView(0)">\u2039 Ablauf</button><div class="nx"><div class="lbl">ZEIT-\u00dcBERSICHT</div></div>';
+    save();scrollNach(y0);return;}
+  if(state.view===4){main.innerHTML=sendenAnsicht();
+    bot.innerHTML='<button class="stepback" onclick="zeigeView(0)">\u2039 Ablauf</button><div class="nx"><div class="lbl">SENDEN</div></div>';
     save();scrollNach(y0);return;}
   if(state.view===3){main.innerHTML=punkteAnsicht();
     bot.innerHTML='<button class="stepback" onclick="zeigeView(0)">\u2039 Ablauf</button><div class="nx"><div class="lbl">PUNKTE</div></div>';
     save();scrollNach(y0);return;}
   var h='';
   if(komplett()){
-    h+='<div class="alldone">\u2705 Alle Punkte abgearbeitet<div class="pktmax">\u23f1 '+fmtM(gesamtMs())+' min \u00b7 Bemerkungen erg\u00e4nzen, dann teilen</div></div>';
-    h+='<button class="report" onclick="teilen()">\ud83d\udce4 Checkliste teilen (Bericht)</button>';
+    h+='<div class="alldone">\u2705 Alle Punkte abgearbeitet<div class="pktmax">\u23f1 '+fmtM(gesamtMs())+' min \u00b7 Bemerkungen erg\u00e4nzen, dann senden</div></div>';
+    h+='<button class="report" onclick="teilen()">\ud83d\udce4 Checkliste senden (Bericht)</button>';
     h=ablaufListe(h);main.innerHTML=h;
     bot.innerHTML='<button class="stepback" onclick="stepZurueck()">\u2039 Punkt</button><button class="stepback ic" onclick="undo()" '+(state.hist.length?'':'disabled')+'><span>\u21a9</span><small>R\u00fcckg\u00e4ngig</small></button><div class="nx"><div class="lbl">DURCHLAUF FERTIG \ud83c\udf89</div></div>';
     save();scrollNach(y0);return;}
@@ -508,7 +533,7 @@ function render(){
   var pBtn='<button class="stepback pause ic'+(state.pausiert?' on':'')+'" onclick="togglePause()"><span>'+(state.pausiert?'\u25b6':'\u23f8')+'</span><small>'+(state.pausiert?'Weiter':'Pause')+'</small></button>';
   bot.innerHTML='<button class="stepback ic" onclick="stepZurueck()" '+(state.step?'':'disabled')+'><span>\u2039</span><small>Zur\u00fcck</small></button>'+pBtn+
     '<button class="stepback ic" onclick="undo()" '+(state.hist.length?'':'disabled')+'><span>\u21a9</span><small>R\u00fcckg\u00e4ngig</small></button>'+
-    /* nur die Beschriftung des Knopfs; der Status des Punkts bleibt "n. z." (nicht zutreffend) */
+    /* Knopf, Anzeige und Bericht sagen "ueberspringen/uebersprungen"; intern bleibt es Status 2 (nicht zutreffend) */
     '<button class="skipbtn ic" onclick="nz()"><span>\u21b7</span><small>\u00dcberspringen</small></button>'+
     (subOffen(state.step)>0?(function(){var u=s.u,j=subNext(state.step),r=u[j];
         return '<button class="fertigbtn mg" onclick="subWeiter()">\u2713 Menge '+(u.length-subOffen(state.step)+1)+'/'+u.length+': <small>'+esc(r.m)+' '+esc(r.t)+'</small></button>';})()
@@ -544,7 +569,7 @@ function bericht(){
   for(var i=0;i<STEPS.length;i++){var it=STEPS[i],s=st(it.nr);
     if(it.blk!==grp){if(grp!==null)z.push('');z.push(it.blk);grp=it.blk;}
     var ms=zeitMs(it.nr);
-    z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (n. z.)':(s===0?'   (offen)':''))+(ms>=1000?'   \u23f1 '+fmtM(ms)+' min':''));
+    z.push('  ['+(s===1?'x':(s===2?'-':' '))+'] '+it.nr+' '+it.t+(s===2?'   (\u00fcbersprungen)':(s===0?'   (offen)':''))+(ms>=1000?'   \u23f1 '+fmtM(ms)+' min':''));
     if(it.u){for(var j=0;j<it.u.length;j++){var r=it.u[j];z.push('        ['+(st(r.id)===1?'x':' ')+'] '+r.m+'  '+r.t);}}}
   z.push('');
   z.push('ZEIT-PROTOKOLL: Gesamt '+fmtM(gesamtMs())+' min \u00b7 Pausen '+fmtM(pauseMs())+' min (nicht enthalten)'+
@@ -553,9 +578,12 @@ function bericht(){
   z.push('Punkte: '+punkte().sum+' / '+punkte().max+(komplett()?'   (Durchlauf komplett)':'   (Durchlauf NICHT komplett'+(offenM?', '+offenM+' Mengen offen':'')+')'));
   z.push('');z.push('Bemerkungen / offene Punkte:');z.push(state.bem?state.bem:'\u2013');
   return z.join('\n');}
-/* Rueckgabe 'geteilt' = ueber das Teilen-Menue versendet; 'kopiert' = nur in die Zwischenablage
-   (gilt NICHT als Versandnachweis, Codex-Befund P1.2); false = abgebrochen/nicht moeglich. */
-function teileText(titel,txt){
+/* Rueckgabe 'geteilt' = Mail-Programm mit Empfaenger geoeffnet bzw. ueber das Teilen-Menue versendet;
+   'kopiert' = nur in die Zwischenablage (gilt NICHT als Versandnachweis, Codex-Befund P1.2);
+   false = abgebrochen/nicht moeglich. alt = true: Teilen-Menue statt E-Mail. */
+function teileText(titel,txt,alt){
+  if(MAIL&&!alt){window.location.href='mailto:'+MAIL+'?subject='+encodeURIComponent(titel)+
+      '&body='+encodeURIComponent(txt.replace(/\r?\n/g,'\r\n'));return Promise.resolve('geteilt');}
   if(navigator.share){return navigator.share({title:titel,text:txt}).then(function(){return 'geteilt';},function(e){
     if(e&&e.name==='AbortError')return false;return kopiere(txt);});}
   return kopiere(txt);}
@@ -563,13 +591,14 @@ function kopiere(txt){
   if(navigator.clipboard){return navigator.clipboard.writeText(txt).then(function(){alert('In die Zwischenablage kopiert \u2013 in Mail/Chat einf\u00fcgen. Erst der Versand ist der Nachweis.');return 'kopiert';},
     function(){alert(txt);return 'kopiert';});}
   alert(txt);return Promise.resolve('kopiert');}
-function teilen(){var sig=listeSig();
-  teileText(document.getElementById('titel').textContent,bericht()).then(function(r){
+function teilen(alt){var sig=listeSig();
+  teileText(document.getElementById('titel').textContent+' \u2013 KW '+(state.kw||W.kw)+' / '+W.jahr,bericht(),alt).then(function(r){
     if(r==='geteilt'){state.meld.liste=sig;save();render();}});}
 
 /* Start, sobald der Katalog da ist (lokal sofort, im Repo nach der Entschluesselung) */
 function startApp(d){
   KATALOG=d.bloecke||[];
+  MAIL=(typeof d.mail==='string'&&/^[^\s@<>"?&]+@[^\s@<>"?&]+\.[a-z]{2,}$/i.test(d.mail))?d.mail:'';
   if(d.titel){document.getElementById('titel').textContent=d.titel;document.title=d.titel;}
   STEPS=[];
   for(var b=0;b<KATALOG.length;b++){for(var i=0;i<KATALOG[b].items.length;i++){
